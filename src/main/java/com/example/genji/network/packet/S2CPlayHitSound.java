@@ -56,10 +56,9 @@ public class S2CPlayHitSound {
                         player.playSound(ModSounds.KILL_SOUND.get(), 2.0f, 1.0f); // Increased volume to 2.0f
                     }
                     case "headshot" -> {
-                        player.playSound(ModSounds.HEADSHOT_HIT.get(), 2.0f, 1.0f); // Increased volume to 2.0f
+                        player.playSound(ModSounds.HEADSHOT_HIT.get(), 2.0f, 1.0f);
                     }
                 }
-            } else {
             }
         });
         c.setPacketHandled(true);

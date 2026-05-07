@@ -33,9 +33,10 @@ public class ShurikenEntity extends ThrowableItemProjectile implements GeoEntity
     private static final RawAnimation SPIN  = RawAnimation.begin().thenLoop("animation.shuriken_projectile.spin");
     private static final RawAnimation STUCK = RawAnimation.begin().thenLoop("animation.shuriken_projectile.stuck");
 
-    // Headshot threshold — hits within the upper ~17% of an entity's bbox count as headshots.
-    // Matches OW Genji where the head hitbox is roughly the top 1/6 of the model.
-    private static final double HEADSHOT_TOP_FRACTION = 0.83;
+    // Headshot threshold — hits within the upper ~28% of an entity's bbox
+    // count as headshots. For an MC player (1.8 bbox), Y >= 1.296 covers the
+    // full head model and a bit of the upper neck for forgiving feel.
+    private static final double HEADSHOT_TOP_FRACTION = 0.72;
     private static final float  HEADSHOT_DAMAGE_MULTIPLIER = 1.5f;
 
     // Set to true while a headshot shuriken-hurt() call is on the stack so

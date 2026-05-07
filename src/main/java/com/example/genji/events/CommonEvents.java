@@ -90,7 +90,7 @@ public class CommonEvents {
                 }
 
                 // Edge case: ending cue at start if total active <= cue lead
-                final int endingCueLeadTicks = 1 * 20; // 1s pre-end (matches OW)
+                final int endingCueLeadTicks = 5 * 20; // 5s pre-end (intentional — user-tuned)
                 int totalActive = GenjiConfig.secToTicksClamped(GenjiConfig.DRAGONBLADE_DURATION_SECONDS);
                 if (totalActive <= endingCueLeadTicks && !data.bladeEndingPlayed() && p instanceof ServerPlayer spStart) {
                     spStart.level().playSound(
@@ -102,8 +102,9 @@ public class CommonEvents {
                 }
             }
 
-            // === Play ending SFX exactly 1s (20 ticks) before sheathing begins
-            final int endingCueLeadTicks = 1 * 20;
+            // === Play ending SFX exactly 5s (100 ticks) before sheathing begins
+            // (intentional — user has dialed this in for OW-feel; do not change without sign-off)
+            final int endingCueLeadTicks = 5 * 20;
             if (!data.bladeEndingPlayed() && data.getBladeTicks() == endingCueLeadTicks && endingCueLeadTicks > 0) {
                 if (p instanceof ServerPlayer sp) {
                     sp.level().playSound(
