@@ -114,11 +114,10 @@ public final class DragonbladeCombat {
 
             // Trigger third-person player swing animation
             sp.swing(sp.getUsedItemHand());
-            
-        // Always use our custom LOS-based damage to ensure consistent tuning.
-        triggerAttack(sp);
-            
-            // Play our custom sound
+
+            // Play swing audio at swing-start (the slice "whoosh" cue).
+            // Damage is applied later in onSwingLand at the impact frame —
+            // this matches pre-S9 OW Genji's startup → contact feel.
             float pitch = 0.9f + sp.getRandom().nextFloat() * 0.2f;
             sp.serverLevel().playSound(null, sp, ModSounds.DRAGONBLADE_SLICE.get(), SoundSource.PLAYERS, 1.0f, pitch);
         }

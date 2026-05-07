@@ -101,10 +101,10 @@ public class CommonEvents {
                     );
                 }
 
-                // Edge case: ending cue at start if total active <= 5s
-                final int fiveSeconds = 5 * 20;
+                // Edge case: ending cue at start if total active <= cue lead
+                final int endingCueLeadTicks = 1 * 20; // 1s pre-end (matches OW)
                 int totalActive = GenjiConfig.secToTicksClamped(GenjiConfig.DRAGONBLADE_DURATION_SECONDS);
-                if (totalActive <= fiveSeconds && !data.bladeEndingPlayed() && p instanceof ServerPlayer spStart) {
+                if (totalActive <= endingCueLeadTicks && !data.bladeEndingPlayed() && p instanceof ServerPlayer spStart) {
                     spStart.level().playSound(
                             null, spStart.blockPosition(),
                             ModSounds.DRAGONBLADE_ENDING.get(),
@@ -114,9 +114,9 @@ public class CommonEvents {
                 }
             }
 
-            // === Play ending SFX exactly 5s (100 ticks) before sheathing begins
-            final int fiveSeconds = 5 * 20;
-            if (!data.bladeEndingPlayed() && data.getBladeTicks() == fiveSeconds && fiveSeconds > 0) {
+            // === Play ending SFX exactly 1s (20 ticks) before sheathing begins
+            final int endingCueLeadTicks = 1 * 20;
+            if (!data.bladeEndingPlayed() && data.getBladeTicks() == endingCueLeadTicks && endingCueLeadTicks > 0) {
                 if (p instanceof ServerPlayer sp) {
                     sp.level().playSound(
                             null, sp.blockPosition(),
