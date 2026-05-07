@@ -40,9 +40,6 @@ public class GenjiData {
     private int nanoBoostTicks = 0;
     private boolean nanoJustActivated = false;
 
-    // ====== DOUBLE JUMP ======
-    private boolean doubleJumpUsed = false;
-
     private boolean dirty = true;
 
     // ====== CONFIG HELPERS (SECONDS -> TICKS) ======
@@ -246,11 +243,6 @@ public class GenjiData {
     public void resetDashCooldown() { this.dashCooldown = 0; dirty = true; }
     public void clearDashCooldown() { resetDashCooldown(); }
 
-    // ====== DOUBLE JUMP ======
-    public boolean isDoubleJumpUsed() { return doubleJumpUsed; }
-    public void useDoubleJump() { doubleJumpUsed = true; dirty = true; }
-    public void resetDoubleJump() { doubleJumpUsed = false; dirty = true; }
-
     // ====== PERSISTENCE ======
     public CompoundTag save() {
         CompoundTag t = new CompoundTag();
@@ -273,8 +265,6 @@ public class GenjiData {
 
         t.putInt("nanoBoost", nanoBoostTicks);
         t.putBoolean("nanoJust", nanoJustActivated);
-
-        t.putBoolean("doubleJumpUsed", doubleJumpUsed);
 
         return t;
     }
@@ -299,8 +289,6 @@ public class GenjiData {
 
         nanoBoostTicks = t.getInt("nanoBoost");
         nanoJustActivated = t.contains("nanoJust") && t.getBoolean("nanoJust");
-
-        doubleJumpUsed = t.contains("doubleJumpUsed") && t.getBoolean("doubleJumpUsed");
 
         dirty = true;
     }

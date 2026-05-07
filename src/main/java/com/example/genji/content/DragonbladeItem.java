@@ -77,13 +77,6 @@ public class DragonbladeItem extends SwordItem implements GeoItem {
         return stack;
     }
     
-    /**
-     * Check if Better Combat mod is active
-     */
-    private static boolean isBetterCombatActive() {
-        return net.minecraftforge.fml.ModList.get().isLoaded("bettercombat");
-    }
-    
     @Override
     public float getDamage() {
         // Dragonblade base damage sourced from config (default 11.0 HP)

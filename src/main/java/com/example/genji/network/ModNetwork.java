@@ -6,7 +6,6 @@ import com.example.genji.network.packet.C2SActivateBlade;
 import com.example.genji.network.packet.C2SActivateDash;
 import com.example.genji.network.packet.C2SActivateDeflect;
 import com.example.genji.network.packet.C2SActivateNanoBoost;
-import com.example.genji.network.packet.C2SDoubleJump;
 import com.example.genji.network.packet.C2SSetPrimaryHeld;
 import com.example.genji.network.packet.C2SSetSecondaryHeld;
 import com.example.genji.network.packet.S2CSyncGenjiData;
@@ -48,10 +47,6 @@ public class ModNetwork {
         CHANNEL.messageBuilder(C2SActivateNanoBoost.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .decoder(C2SActivateNanoBoost::new).encoder(C2SActivateNanoBoost::toBytes)
                 .consumerMainThread(C2SActivateNanoBoost::handle).add();
-
-        CHANNEL.messageBuilder(C2SDoubleJump.class, id++, NetworkDirection.PLAY_TO_SERVER)
-                .decoder(C2SDoubleJump::new).encoder(C2SDoubleJump::toBytes)
-                .consumerMainThread(C2SDoubleJump::handle).add();
 
         CHANNEL.messageBuilder(C2SSetPrimaryHeld.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .decoder(C2SSetPrimaryHeld::new).encoder(C2SSetPrimaryHeld::toBytes)

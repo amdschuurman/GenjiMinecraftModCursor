@@ -6,29 +6,23 @@ import net.minecraft.client.Minecraft;
 public final class FPDashAnim {
     private FPDashAnim() {}
 
+    /** Floor for dash anim duration — prevents 0/1-tick "blink" anims from server-side scaling. */
+    private static final int MIN_DURATION_TICKS = 2;
+
     private static long startTick = Long.MIN_VALUE;
     private static long endTick = Long.MIN_VALUE;
-    private static int durationTicks = 5;
+    private static int durationTicks = MIN_DURATION_TICKS;
     private static boolean wasJustStarted = false;
     private static long lastTickChecked = Long.MIN_VALUE;
 
     /** Called when the dash begins with a specific duration (from S2CStartDash packet). */
     public static void start(int duration) {
         long currentTick = gameTicks();
-        
-        
-        // Set new state
-        durationTicks = Math.max(2, duration);
+        durationTicks = Math.max(MIN_DURATION_TICKS, duration);
         startTick = currentTick;
         endTick = currentTick + durationTicks;
         wasJustStarted = true;
         lastTickChecked = currentTick;
-        
-    }
-
-    /** Called when the dash begins with default duration (legacy support). */
-    public static void start() {
-        start(5);
     }
 
     /** True while the dash clip should be playing. */
@@ -70,15 +64,7 @@ public final class FPDashAnim {
 
     private static long gameTicks() {
         var mc = Minecraft.getInstance();
-        if (mc.level == null) {
-            return 0L;
-        }
+        if (mc.level == null) return 0L;
         return mc.level.getGameTime();
-    }
-    
-    /** Force clear the animation state (for debugging). */
-    public static void forceStop() {
-        clear();
-        durationTicks = 5;
     }
 }
