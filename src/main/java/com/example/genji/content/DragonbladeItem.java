@@ -93,7 +93,7 @@ public class DragonbladeItem extends SwordItem implements GeoItem {
 
     /**
      * Apply nanoboost enchantments to the dragonblade item.
-     * Adds Sharpness V and Looting III when nanoboost is active.
+     * Adds Sharpness III and Looting III when nanoboost is active.
      */
     public static void applyNanoboostEnchantments(ItemStack stack, boolean nanoboostActive) {
         if (nanoboostActive) {

@@ -23,5 +23,21 @@
   "advancement.genji.arend_warning.title": "The Dragon Has Found Its Master",
   "advancement.genji.arend_warning.description": "A forgotten power stirs once more… the dragon bows to Arend Shimada.",
   "advancement.genji.arend_god.title": "He Who Commands The Storm",
-  "advancement.genji.arend_god.description": "The ancient spirit awakens in your veins - its roar echoes through steel."
+  "advancement.genji.arend_god.description": "The ancient spirit awakens in your veins - its roar echoes through steel.",
+
+  "subtitles.genji.shuriken_attack1": "Shuriken thrown",
+  "subtitles.genji.shuriken_attack2": "Shuriken fan",
+  "subtitles.genji.shuriken_hit": "Shuriken strikes",
+  "subtitles.genji.shuriken_hit_nano": "Empowered shuriken strikes",
+  "subtitles.genji.dash": "Swift Strike",
+  "subtitles.genji.deflect_start": "Deflect raised",
+  "subtitles.genji.deflect_end": "Deflect lowered",
+  "subtitles.genji.deflect_ping": "Projectile deflected",
+  "subtitles.genji.dragonblade_start": "Ryūjin no ken o kurae!",
+  "subtitles.genji.dragonblade_ending": "Dragonblade fading",
+  "subtitles.genji.dragonblade_slice": "Dragonblade slashes",
+  "subtitles.genji.dragonblade_hit": "Dragonblade strikes",
+  "subtitles.genji.kill_sound": "Elimination",
+  "subtitles.genji.headshot_hit": "Headshot",
+  "subtitles.genji.nanoboost_cast": "Chikara ga minagitte kuru!"
 }
