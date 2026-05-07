@@ -178,11 +178,12 @@ public final class DragonbladeCombat {
         var entities = level.getEntitiesOfClass(LivingEntity.class, searchBox, 
             entity -> entity != sp && entity.isAlive() && !entity.isDeadOrDying() && sp.canAttack(entity));
         
-        // Check nanoboost status for damage multiplier
+        // Nano damage multiplier read from the unified config (NANO_DAMAGE_MULTIPLIER)
+        // so shuriken/dash/deflect/dragonblade all share one tunable. data.getNanoDamageMultiplier
+        // returns 1.0 when nano is not active, so this works in both states.
         var data = GenjiDataProvider.getOrNull(sp);
-        boolean nanoboostActive = data != null && data.isNanoActive();
-        float damageMultiplier = nanoboostActive ? 1.5f : 1.0f; // +50% damage with nanoboost
-        float baseDamage = GenjiConfig.DAMAGE_PER_DRAGONBLADE_SWING.get().floatValue(); // Configurable base damage
+        float damageMultiplier = (data != null) ? (float) data.getNanoDamageMultiplier() : 1.0f;
+        float baseDamage = GenjiConfig.DAMAGE_PER_DRAGONBLADE_SWING.get().floatValue();
         float finalDamage = baseDamage * damageMultiplier;
         
         INTERNAL_DRAGONBLADE_DAMAGE.set(true);

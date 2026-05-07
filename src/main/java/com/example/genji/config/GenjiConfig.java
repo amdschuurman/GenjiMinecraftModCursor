@@ -119,7 +119,7 @@ public final class GenjiConfig {
         // Nano-Boost
         b.push("NanoBoost");
         NANO_DURATION_SECONDS             = b.defineInRange("DurationSeconds",             9,   1, 600);
-        NANO_DAMAGE_MULTIPLIER            = b.defineInRange("DamageMultiplier",           2.0, 1.0, 100.0);
+        NANO_DAMAGE_MULTIPLIER            = b.defineInRange("DamageMultiplier",           1.5, 1.0, 100.0);
         NANO_SLASH_SPEED_MULTIPLIER       = b.defineInRange("SlashSpeedMultiplier",       1.0, 1.0, 10.0);
 
         NANO_SPEED_AMPLIFIER          = b.defineInRange("Effects.SpeedAmplifier",          1,  -1, 10);
@@ -196,6 +196,15 @@ public final class GenjiConfig {
         double height = DRAGONBLADE_HEIGHT.get();
         if (Math.abs(height - 2.4) < 1e-3) {
             DRAGONBLADE_HEIGHT.set(1.0);
+            changed = true;
+        }
+
+        // Nano damage multiplier: unify to 1.5x (OW canon, matches the value
+        // the dragonblade was already using). Dragonblade now reads from the
+        // same config so all attack types use one path.
+        double nanoMult = NANO_DAMAGE_MULTIPLIER.get();
+        if (Math.abs(nanoMult - 2.0) < 1e-3) {
+            NANO_DAMAGE_MULTIPLIER.set(1.5);
             changed = true;
         }
 
