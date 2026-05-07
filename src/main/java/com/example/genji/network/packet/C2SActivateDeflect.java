@@ -25,30 +25,12 @@ public class C2SActivateDeflect {
             if (data.isDeflectActive()) {
                 // Manual cancel: stop deflect & start cooldown — NO end sound here
                 data.cancelDeflectStartCooldown();
-                data.markSynced();
-                ModNetwork.CHANNEL.sendTo(
-                        new S2CSyncGenjiData(
-                                data.getUlt(), data.getNano(), data.getBladeTicks(), data.getDeflectTicks(),
-                                data.getDashCooldown(), data.getDeflectCooldown(),
-                                data.getBladeCastTicks(), data.getBladeSheatheTicks(), data.getNanoBoostTicks()
-                        ),
-                        sp.connection.connection,
-                        net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT
-                );
+                ModNetwork.syncTo(sp, data);
             } else {
                 // Try start deflect
                 if (data.tryDeflect()) {
                     sp.level().playSound(null, sp, ModSounds.DEFLECT_START.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
-                    data.markSynced();
-                    ModNetwork.CHANNEL.sendTo(
-                            new S2CSyncGenjiData(
-                                    data.getUlt(), data.getNano(), data.getBladeTicks(), data.getDeflectTicks(),
-                                    data.getDashCooldown(), data.getDeflectCooldown(),
-                                    data.getBladeCastTicks(), data.getBladeSheatheTicks(), data.getNanoBoostTicks()
-                            ),
-                            sp.connection.connection,
-                            net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT
-                    );
+                    ModNetwork.syncTo(sp, data);
                 }
             }
         });

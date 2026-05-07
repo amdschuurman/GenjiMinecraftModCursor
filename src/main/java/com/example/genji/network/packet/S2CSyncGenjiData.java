@@ -22,17 +22,6 @@ public class S2CSyncGenjiData {
     private final int bladeSheatheTicks;
     private final int nanoBoostTicks; // NEW: Nano active timer
 
-    /** Legacy (no nano). */
-    public S2CSyncGenjiData(int ult, int bladeTicks, int deflectTicks, int dashCooldown, int deflectCooldown, int bladeCastTicks, int bladeSheatheTicks) {
-        this(ult, 0, bladeTicks, deflectTicks, dashCooldown, deflectCooldown, bladeCastTicks, bladeSheatheTicks, 0);
-    }
-
-    /** Full (with nano). */
-    public S2CSyncGenjiData(int ult, int nano, int bladeTicks, int deflectTicks, int dashCooldown, int deflectCooldown, int bladeCastTicks, int bladeSheatheTicks) {
-        this(ult, nano, bladeTicks, deflectTicks, dashCooldown, deflectCooldown, bladeCastTicks, bladeSheatheTicks, 0);
-    }
-
-    /** Full (with nano and nanoBoostTicks). */
     public S2CSyncGenjiData(int ult, int nano, int bladeTicks, int deflectTicks, int dashCooldown, int deflectCooldown, int bladeCastTicks, int bladeSheatheTicks, int nanoBoostTicks) {
         this.ult = ult;
         this.nano = nano;

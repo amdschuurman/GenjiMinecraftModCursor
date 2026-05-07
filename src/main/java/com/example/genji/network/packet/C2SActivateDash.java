@@ -73,20 +73,9 @@ public class C2SActivateDash {
                 data.setBladeSlot(-1); // so end-of-blade logic doesn't fight us later
             }
 
-            // NOTE: Dash animation is now triggered by S2CStartDash packet with correct variable duration
-            // (DashAbility.startDash sends S2CStartDash which handles both interpolation and animation)
-
+            // NOTE: Dash animation is triggered by S2CStartDash inside DashAbility.startDash.
             // Sync HUD/FX right away (dashCooldown, etc.)
-            ModNetwork.CHANNEL.sendTo(
-                    new S2CSyncGenjiData(
-                            data.getUlt(), data.getNano(), data.getBladeTicks(), data.getDeflectTicks(),
-                            data.getDashCooldown(), data.getDeflectCooldown(),
-                            data.getBladeCastTicks(), data.getBladeSheatheTicks(), data.getNanoBoostTicks()
-                    ),
-                    sp.connection.connection,
-                    NetworkDirection.PLAY_TO_CLIENT
-            );
-            data.markSynced();
+            ModNetwork.syncTo(sp, data);
         });
         ctx.get().setPacketHandled(true);
         return true;

@@ -76,22 +76,7 @@ public class C2SActivateBlade {
                 ShurikenCombat.setSecondaryHeld(sp, false);
 
                 // Immediate sync so client shows unsheath overlay this tick
-                ModNetwork.CHANNEL.sendTo(
-                        new S2CSyncGenjiData(
-                                data.getUlt(),
-                                data.getNano(),
-                                data.getBladeTicks(),
-                                data.getDeflectTicks(),
-                                data.getDashCooldown(),
-                                data.getDeflectCooldown(),
-                                data.getBladeCastTicks(),
-                                data.getBladeSheatheTicks(),
-                                data.getNanoBoostTicks()
-                        ),
-                        sp.connection.connection,
-                        NetworkDirection.PLAY_TO_CLIENT
-                );
-                data.markSynced();
+                ModNetwork.syncTo(sp, data);
             });
         });
         c.setPacketHandled(true);

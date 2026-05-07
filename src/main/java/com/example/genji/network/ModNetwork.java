@@ -1,6 +1,7 @@
 package com.example.genji.network;
 
 import com.example.genji.GenjiMod;
+import com.example.genji.capability.GenjiData;
 import com.example.genji.network.packet.C2SActivateBlade;
 import com.example.genji.network.packet.C2SActivateDash;
 import com.example.genji.network.packet.C2SActivateDeflect;
@@ -13,6 +14,7 @@ import com.example.genji.network.packet.S2CShurikenFPAnim;
 import com.example.genji.network.packet.S2CPlayHitSound;
 import com.example.genji.network.packet.S2CPlayerPunchAnim;
 import com.example.genji.network.packet.S2CStartDash;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -100,5 +102,33 @@ public class ModNetwork {
                 .consumerMainThread(S2CStartDash::handle)
                 .add();
 
+    }
+
+    /**
+     * Send a full GenjiData state sync to the client and clear the dirty flag.
+     * Use this from event-response paths that always have a state change.
+     */
+    public static void syncTo(ServerPlayer sp, GenjiData data) {
+        CHANNEL.sendTo(
+                new S2CSyncGenjiData(
+                        data.getUlt(), data.getNano(),
+                        data.getBladeTicks(), data.getDeflectTicks(),
+                        data.getDashCooldown(), data.getDeflectCooldown(),
+                        data.getBladeCastTicks(), data.getBladeSheatheTicks(),
+                        data.getNanoBoostTicks()
+                ),
+                sp.connection.connection,
+                NetworkDirection.PLAY_TO_CLIENT
+        );
+        data.markSynced();
+    }
+
+    /**
+     * Send a sync only if state actually changed since the last send.
+     * Use this from per-tick paths so idle players don't receive
+     * redundant packets every tick.
+     */
+    public static void syncIfDirty(ServerPlayer sp, GenjiData data) {
+        if (data.isDirty()) syncTo(sp, data);
     }
 }

@@ -155,26 +155,10 @@ public class CommonEvents {
                 data.clearBladeSlot();
             }
 
-            // === Drive Dragonblade combat loop + sync to client
+            // === Drive Dragonblade combat loop + sync to client (dirty-gated)
             if (p instanceof ServerPlayer sp) {
                 DragonbladeCombat.perPlayerTick(sp);
-
-                ModNetwork.CHANNEL.sendTo(
-                        new S2CSyncGenjiData(
-                                data.getUlt(),
-                                data.getNano(),
-                                data.getBladeTicks(),
-                                data.getDeflectTicks(),
-                                data.getDashCooldown(),
-                                data.getDeflectCooldown(),
-                                data.getBladeCastTicks(),
-                                data.getBladeSheatheTicks(),
-                                data.getNanoBoostTicks()
-                        ),
-                        sp.connection.connection,
-                        net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT
-                );
-                data.markSynced();
+                ModNetwork.syncIfDirty(sp, data);
             }
         });
     }
@@ -281,21 +265,7 @@ public class CommonEvents {
 
             // Kill sound is now handled in LivingDeathEvent in DashResets.java
 
-            ModNetwork.CHANNEL.sendTo(
-                    new S2CSyncGenjiData(
-                            data.getUlt(),
-                            data.getNano(),
-                            data.getBladeTicks(),
-                            data.getDeflectTicks(),
-                            data.getDashCooldown(),
-                            data.getDeflectCooldown(),
-                            data.getBladeCastTicks(),
-                            data.getBladeSheatheTicks()
-                    ),
-                    sp.connection.connection,
-                    net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT
-            );
-            data.markSynced();
+            ModNetwork.syncTo(sp, data);
         });
     }
 }
