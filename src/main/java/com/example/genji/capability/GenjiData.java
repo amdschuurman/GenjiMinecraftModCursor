@@ -28,7 +28,6 @@ public class GenjiData {
 
     // ====== INVENTORY SLOTS ======
     private int bladeSlot = -1;
-    private int deflectSlot = -1;
 
     // ====== DEFLECT ======
     private int deflectTicks = 0;
@@ -44,7 +43,6 @@ public class GenjiData {
     // ====== DOUBLE JUMP ======
     private boolean doubleJumpUsed = false;
 
-    private boolean dashResetDoneForThisBlade = false;
     private boolean dirty = true;
 
     // ====== CONFIG HELPERS (SECONDS -> TICKS) ======
@@ -114,8 +112,6 @@ public class GenjiData {
 
     public double getNanoDamageMultiplier()       { return isNanoActive() ? Math.max(1.0, GenjiConfig.NANO_DAMAGE_MULTIPLIER.get()) : 1.0; }
     public double getNanoSlashSpeedMultiplier()   { return isNanoActive() ? Math.max(1.0, GenjiConfig.NANO_SLASH_SPEED_MULTIPLIER.get()) : 1.0; }
-    public double getNanoFirerateMultiplier()     { return isNanoActive() ? Math.max(1.0, GenjiConfig.NANO_SHURIKEN_FIRERATE_MULTIPLIER.get()) : 1.0; }
-    public double getNanoPitchMultiplier()        { return isNanoActive() ? Math.max(1.0, GenjiConfig.NANO_PITCH_MULTIPLIER.get()) : 1.0; }
 
     // ====== BLADE ======
     public boolean isBladeActive()    { return bladeTicks > 0; }
@@ -132,7 +128,6 @@ public class GenjiData {
 
     public void beginBladeCast() {
         bladeCastTicks = cfgBladeCastTicks();
-        clearDashResetDoneForThisBlade();
         ult = 0;
         cancelDeflect();
         dirty = true;
@@ -246,10 +241,6 @@ public class GenjiData {
     public void resetDashCooldown() { this.dashCooldown = 0; dirty = true; }
     public void clearDashCooldown() { resetDashCooldown(); }
 
-    public boolean isDashResetDoneForThisBlade() { return dashResetDoneForThisBlade; }
-    public void markDashResetDoneForThisBlade() { dashResetDoneForThisBlade = true; dirty = true; }
-    public void clearDashResetDoneForThisBlade() { dashResetDoneForThisBlade = false; dirty = true; }
-
     // ====== DOUBLE JUMP ======
     public boolean isDoubleJumpUsed() { return doubleJumpUsed; }
     public void useDoubleJump() { doubleJumpUsed = true; dirty = true; }
@@ -272,10 +263,8 @@ public class GenjiData {
 
         t.putInt("deflect", deflectTicks);
         t.putInt("deflectCd", deflectCooldown);
-        t.putInt("deflectSlot", deflectSlot);
 
         t.putInt("dashCd", dashCooldown);
-        t.putBoolean("dashResetOnce", dashResetDoneForThisBlade);
 
         t.putInt("nanoBoost", nanoBoostTicks);
         t.putBoolean("nanoJust", nanoJustActivated);
@@ -300,10 +289,8 @@ public class GenjiData {
 
         deflectTicks = t.getInt("deflect");
         deflectCooldown = t.getInt("deflectCd");
-        deflectSlot = t.contains("deflectSlot") ? t.getInt("deflectSlot") : -1;
 
         dashCooldown = t.getInt("dashCd");
-        dashResetDoneForThisBlade = t.contains("dashResetOnce") && t.getBoolean("dashResetOnce");
 
         nanoBoostTicks = t.getInt("nanoBoost");
         nanoJustActivated = t.contains("nanoJust") && t.getBoolean("nanoJust");

@@ -4,8 +4,7 @@ import com.example.genji.GenjiMod;
 import com.example.genji.network.packet.C2SActivateBlade;
 import com.example.genji.network.packet.C2SActivateDash;
 import com.example.genji.network.packet.C2SActivateDeflect;
-import com.example.genji.network.packet.C2SActivateNanoBoost; // <-- NEW
-import com.example.genji.network.packet.C2SBladeSwingHold;
+import com.example.genji.network.packet.C2SActivateNanoBoost;
 import com.example.genji.network.packet.C2SDoubleJump;
 import com.example.genji.network.packet.C2SSetPrimaryHeld;
 import com.example.genji.network.packet.C2SSetSecondaryHeld;
@@ -19,7 +18,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ModNetwork {
-    public static final String PROTO = "1";
+    public static final String PROTO = "2";
     public static SimpleChannel CHANNEL;
     private static int id = 0;
 
@@ -44,17 +43,10 @@ public class ModNetwork {
                 .decoder(C2SActivateBlade::new).encoder(C2SActivateBlade::toBytes)
                 .consumerMainThread(C2SActivateBlade::handle).add();
 
-        // NEW: Nano-Boost activation
         CHANNEL.messageBuilder(C2SActivateNanoBoost.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .decoder(C2SActivateNanoBoost::new).encoder(C2SActivateNanoBoost::toBytes)
                 .consumerMainThread(C2SActivateNanoBoost::handle).add();
 
-        // NEW: hold signal while Blade is active (M1/M2 pressed)
-        CHANNEL.messageBuilder(C2SBladeSwingHold.class, id++, NetworkDirection.PLAY_TO_SERVER)
-                .decoder(C2SBladeSwingHold::new).encoder(C2SBladeSwingHold::toBytes)
-                .consumerMainThread(C2SBladeSwingHold::handle).add();
-
-        // NEW: double jump activation
         CHANNEL.messageBuilder(C2SDoubleJump.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .decoder(C2SDoubleJump::new).encoder(C2SDoubleJump::toBytes)
                 .consumerMainThread(C2SDoubleJump::handle).add();
@@ -81,12 +73,6 @@ public class ModNetwork {
                 .decoder(com.example.genji.network.packet.S2CDragonbladeFPAnim::new)
                 .encoder(com.example.genji.network.packet.S2CDragonbladeFPAnim::toBytes)
                 .consumerMainThread(com.example.genji.network.packet.S2CDragonbladeFPAnim::handle).add();
-
-        CHANNEL.messageBuilder(com.example.genji.network.packet.S2CFPDashAnim.class, id++, NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(com.example.genji.network.packet.S2CFPDashAnim::new)
-                .encoder(com.example.genji.network.packet.S2CFPDashAnim::toBytes)
-                .consumerMainThread(com.example.genji.network.packet.S2CFPDashAnim::handle)
-                .add();
 
         CHANNEL.messageBuilder(com.example.genji.network.packet.S2CDeflectHit.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(com.example.genji.network.packet.S2CDeflectHit::new)

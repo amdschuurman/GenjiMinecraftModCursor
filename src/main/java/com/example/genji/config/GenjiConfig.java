@@ -39,7 +39,6 @@ public final class GenjiConfig {
     // ===== DRAGONBLADE COMBAT =====
     public static final ForgeConfigSpec.IntValue    DRAGONBLADE_COMBO_WINDOW_TICKS;
     public static final ForgeConfigSpec.DoubleValue DRAGONBLADE_REACH;
-    public static final ForgeConfigSpec.DoubleValue DRAGONBLADE_WIDTH;
     public static final ForgeConfigSpec.DoubleValue DRAGONBLADE_HEIGHT;
     public static final ForgeConfigSpec.DoubleValue DAMAGE_PER_DRAGONBLADE_SWING;
 
@@ -51,8 +50,6 @@ public final class GenjiConfig {
     public static final ForgeConfigSpec.IntValue    NANO_DURATION_SECONDS;
     public static final ForgeConfigSpec.DoubleValue NANO_DAMAGE_MULTIPLIER;
     public static final ForgeConfigSpec.DoubleValue NANO_SLASH_SPEED_MULTIPLIER;
-    public static final ForgeConfigSpec.DoubleValue NANO_SHURIKEN_FIRERATE_MULTIPLIER;
-    public static final ForgeConfigSpec.DoubleValue NANO_PITCH_MULTIPLIER;
     public static final ForgeConfigSpec.IntValue    NANO_SPEED_AMPLIFIER;
     public static final ForgeConfigSpec.IntValue    NANO_RESISTANCE_AMPLIFIER;
     public static final ForgeConfigSpec.IntValue    NANO_FIRE_RES_AMPLIFIER;
@@ -109,7 +106,6 @@ public final class GenjiConfig {
         b.push("DragonbladeCombat");
         DRAGONBLADE_COMBO_WINDOW_TICKS = b.defineInRange("ComboWindowTicks", 10, 0, 200);
         DRAGONBLADE_REACH   = b.defineInRange("Reach",          5.0, 0.0, 64.0);
-        DRAGONBLADE_WIDTH   = b.defineInRange("Width",          2.6, 0.0, 64.0);
         DRAGONBLADE_HEIGHT  = b.defineInRange("Height",         1.0, 0.0, 64.0);
         DAMAGE_PER_DRAGONBLADE_SWING = b.defineInRange("DamagePerSwing", 11.0, 0.0, 1_000_000.0);
         b.pop();
@@ -125,8 +121,6 @@ public final class GenjiConfig {
         NANO_DURATION_SECONDS             = b.defineInRange("DurationSeconds",             9,   1, 600);
         NANO_DAMAGE_MULTIPLIER            = b.defineInRange("DamageMultiplier",           2.0, 1.0, 100.0);
         NANO_SLASH_SPEED_MULTIPLIER       = b.defineInRange("SlashSpeedMultiplier",       1.0, 1.0, 10.0);
-        NANO_SHURIKEN_FIRERATE_MULTIPLIER = b.defineInRange("ShurikenFireRateMultiplier", 1.0, 1.0, 10.0);
-        NANO_PITCH_MULTIPLIER             = b.defineInRange("PitchMultiplier",            1.15,1.0, 3.0);
 
         NANO_SPEED_AMPLIFIER          = b.defineInRange("Effects.SpeedAmplifier",          1,  -1, 10);
         NANO_RESISTANCE_AMPLIFIER     = b.defineInRange("Effects.ResistanceAmplifier",     1,  -1, 10);
