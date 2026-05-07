@@ -41,32 +41,25 @@ public class S2CPlayHitSound {
             // Play sound on client side
             var player = Minecraft.getInstance().player;
             if (player != null) {
-                System.out.println("Playing hit sound: " + soundType); // Debug log
                 switch (soundType) {
                     case "shuriken" -> {
-                        System.out.println("CLIENT: Playing SHURIKEN NORMAL hit sound"); // Debug log
                         player.playSound(ModSounds.SHURIKEN_HIT.get(), 2.0f, 1.0f); // Increased volume to 2.0f
                     }
                     case "shuriken_nano" -> {
-                        System.out.println("CLIENT: Playing SHURIKEN NANO hit sound"); // Debug log
                         player.playSound(ModSounds.SHURIKEN_HIT_NANO.get(), 2.0f, 1.0f); // Increased volume to 2.0f
                     }
                     case "dragonblade" -> {
-                        System.out.println("CLIENT: Playing DRAGONBLADE hit sound"); // Debug log
                         BlockPos soundPos = targetPos != null ? targetPos : player.blockPosition();
                         player.level().playSound(null, soundPos, ModSounds.DRAGONBLADE_HIT.get(), net.minecraft.sounds.SoundSource.PLAYERS, 50.0f, 1.0f); // Play at target position
                     }
                     case "kill" -> {
-                        System.out.println("CLIENT: Playing KILL sound"); // Debug log
                         player.playSound(ModSounds.KILL_SOUND.get(), 2.0f, 1.0f); // Increased volume to 2.0f
                     }
                     case "headshot" -> {
-                        System.out.println("CLIENT: Playing HEADSHOT sound"); // Debug log
                         player.playSound(ModSounds.HEADSHOT_HIT.get(), 2.0f, 1.0f); // Increased volume to 2.0f
                     }
                 }
             } else {
-                System.out.println("Player is null, cannot play hit sound: " + soundType); // Debug log
             }
         });
         c.setPacketHandled(true);

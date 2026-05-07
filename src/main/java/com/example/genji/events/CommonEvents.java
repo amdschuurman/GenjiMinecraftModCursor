@@ -262,21 +262,16 @@ public class CommonEvents {
             }
 
             // Send hit sound packet to client
-            System.out.println("Hit sound check - shurikenHit: " + shurikenHit + ", bladeActive: " + data.isBladeActive() + ", holdingShuriken: " + holdingShuriken); // Debug log
             
             if (shurikenHit) {
                 // Shuriken hit sound
-                System.out.println("SHURIKEN HIT DETECTED - nano active: " + data.isNanoActive()); // Debug log
                 if (data.isNanoActive()) {
-                    System.out.println("Sending shuriken NANO hit sound packet"); // Debug log
                     ModNetwork.CHANNEL.sendTo(new S2CPlayHitSound("shuriken_nano"), sp.connection.connection, net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT);
                 } else {
-                    System.out.println("Sending shuriken NORMAL hit sound packet"); // Debug log
                     ModNetwork.CHANNEL.sendTo(new S2CPlayHitSound("shuriken"), sp.connection.connection, net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT);
                 }
             } else if (holdingShuriken) {
                 // Dash damage hit sound (when holding shurikens)
-                System.out.println("Sending dash hit sound packet, nano active: " + data.isNanoActive()); // Debug log
                 if (data.isNanoActive()) {
                     ModNetwork.CHANNEL.sendTo(new S2CPlayHitSound("shuriken_nano"), sp.connection.connection, net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT);
                 } else {

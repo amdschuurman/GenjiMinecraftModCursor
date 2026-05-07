@@ -42,7 +42,6 @@ public class PerspectiveAwareDragonbladeRenderer extends BlockEntityWithoutLevel
 
         if (!(stack.getItem() instanceof DragonbladeItem)) return;
 
-        System.out.println("DRAGONBLADE RENDERER: Called with context=" + displayContext);
 
         // For ground, fixed, and other contexts, let Minecraft handle the default rendering
         if (displayContext == ItemDisplayContext.GROUND ||
@@ -50,28 +49,22 @@ public class PerspectiveAwareDragonbladeRenderer extends BlockEntityWithoutLevel
             displayContext == ItemDisplayContext.HEAD ||
             displayContext == ItemDisplayContext.NONE) {
             // Let Minecraft handle the default rendering for these contexts
-            System.out.println("DRAGONBLADE RENDERER: Ground/Fixed/Head/None context - letting Minecraft handle");
             return;
         }
 
         // For first-person rendering, let the FirstPersonDragonbladeOverlay handle it
         if (isFirstPersonContext(displayContext)) {
             // First person is handled by FirstPersonDragonbladeOverlay
-            System.out.println("DRAGONBLADE RENDERER: First person context - letting overlay handle");
             return;
         }
 
         // For GUI and third-person contexts, render the GeckoLib TPS model (static)
         if (displayContext == ItemDisplayContext.GUI || isThirdPersonContext(displayContext)) {
-            System.out.println("DRAGONBLADE RENDERER: GUI/Third person context - rendering TPS model");
-            System.out.println("DRAGONBLADE RENDERER: Display context = " + displayContext);
             tpsBladeRenderer.renderByItem(stack, displayContext, poseStack, buffer, packedLight, packedOverlay);
-            System.out.println("DRAGONBLADE RENDERER: TPS model render call completed");
             return;
         }
 
         // For any other context, let Minecraft handle it
-        System.out.println("DRAGONBLADE RENDERER: Unknown context - letting Minecraft handle: " + displayContext);
     }
 
     private boolean isFirstPersonContext(ItemDisplayContext displayContext) {

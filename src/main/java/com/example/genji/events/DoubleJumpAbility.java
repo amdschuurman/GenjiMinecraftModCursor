@@ -25,7 +25,6 @@ public class DoubleJumpAbility {
             // Reset double jump when player hits the ground
             if (sp.onGround() && data.isDoubleJumpUsed()) {
                 data.resetDoubleJump();
-                System.out.println("DOUBLE JUMP: Player " + sp.getName() + " reset double jump (hit ground)");
             }
         });
     }
@@ -35,7 +34,6 @@ public class DoubleJumpAbility {
      */
     public static void executeDoubleJump(ServerPlayer sp) {
         sp.getCapability(GenjiDataProvider.CAPABILITY).ifPresent(data -> {
-            System.out.println("DOUBLE JUMP: Checking conditions - onGround=" + sp.onGround() + ", inWater=" + sp.isInWater() + ", passenger=" + sp.isPassenger() + ", doubleJumpUsed=" + data.isDoubleJumpUsed());
             // Check if player is in air and hasn't used double jump yet
             if (!sp.onGround() && !sp.isInWater() && !sp.isPassenger() && !data.isDoubleJumpUsed()) {
                 // Apply double jump velocity (small hop)
@@ -44,9 +42,7 @@ public class DoubleJumpAbility {
                 // Mark double jump as used
                 data.useDoubleJump();
                 
-                System.out.println("DOUBLE JUMP: Player " + sp.getName() + " used double jump - applied velocity " + DOUBLE_JUMP_VELOCITY);
             } else {
-                System.out.println("DOUBLE JUMP: Conditions not met for " + sp.getName());
             }
         });
     }

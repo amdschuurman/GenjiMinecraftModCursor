@@ -180,14 +180,12 @@ public final class DashAbility {
             
             // Check if damage was actually dealt and send hit sound
             if (wasAlive && e instanceof LivingEntity) {
-                System.out.println("DASH: Damage dealt, sending hit sound"); // Debug log
                 
                 // Get player data to check nano status
                 sp.getCapability(com.example.genji.capability.GenjiDataProvider.CAPABILITY).ifPresent(data -> {
                     boolean isNanoActive = data.isNanoActive();
                     
                     // Always play shuriken hit sounds for dash (normal or nano based on status)
-                    System.out.println("DASH: Sending shuriken hit sound, nano: " + isNanoActive); // Debug log
                     String soundType = isNanoActive ? "shuriken_nano" : "shuriken";
                     com.example.genji.network.ModNetwork.CHANNEL.sendTo(
                         new com.example.genji.network.packet.S2CPlayHitSound(soundType), 

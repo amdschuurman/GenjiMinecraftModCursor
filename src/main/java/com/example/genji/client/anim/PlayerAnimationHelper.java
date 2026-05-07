@@ -103,9 +103,7 @@ public class PlayerAnimationHelper {
         boolean detected = ModList.get().isLoaded(BETTER_COMBAT_MOD_ID);
         // Debug: Print to console to verify detection
         if (detected) {
-            System.out.println("[Genji Mod] Better Combat detected - katana animations enabled");
         } else {
-            System.out.println("[Genji Mod] Better Combat not detected - using fallback animations");
         }
         return detected;
     }

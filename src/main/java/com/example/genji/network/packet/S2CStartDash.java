@@ -41,16 +41,11 @@ public class S2CStartDash {
         ctx.get().enqueueWork(() -> {
             if (Minecraft.getInstance().player == null) return;
             
-            System.out.println("=== S2CStartDash received ===");
-            System.out.println("Duration: " + durationTicks + " ticks");
-            System.out.println("Start: " + start);
-            System.out.println("End: " + end);
             
             // Start both interpolation and animation with the same duration
             DashInterpolation.start(start, end, durationTicks);
             FPDashAnim.start(durationTicks);
             
-            System.out.println("FPDashAnim.isActive() after start: " + FPDashAnim.isActive());
         });
         ctx.get().setPacketHandled(true);
         return true;

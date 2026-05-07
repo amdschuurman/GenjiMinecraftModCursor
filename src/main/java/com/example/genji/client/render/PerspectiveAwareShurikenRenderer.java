@@ -14,6 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 /**
@@ -22,6 +24,8 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
  * - Third person: renders only shurikens model without positioning manipulation
  */
 public class PerspectiveAwareShurikenRenderer extends BlockEntityWithoutLevelRenderer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PerspectiveAwareShurikenRenderer.class);
 
     // First-person renderers (hand + shurikens)
     private final GeoItemRenderer<ShurikenItem> handRenderer =
@@ -59,7 +63,6 @@ public class PerspectiveAwareShurikenRenderer extends BlockEntityWithoutLevelRen
 
         if (!(stack.getItem() instanceof ShurikenItem)) return;
 
-        System.out.println("SHURIKEN RENDERER: Called with context=" + displayContext);
 
         // For ground, fixed, and other contexts, let Minecraft handle the default rendering
         if (displayContext == ItemDisplayContext.GROUND ||
@@ -67,35 +70,28 @@ public class PerspectiveAwareShurikenRenderer extends BlockEntityWithoutLevelRen
             displayContext == ItemDisplayContext.HEAD ||
             displayContext == ItemDisplayContext.NONE) {
             // Let Minecraft handle the default rendering for these contexts
-            System.out.println("SHURIKEN RENDERER: Ground/Fixed/Head/None context - letting Minecraft handle");
             return;
         }
 
         // For first-person rendering, let the FirstPersonShurikenOverlay handle it
         if (isFirstPersonContext(displayContext)) {
             // First person is handled by FirstPersonShurikenOverlay
-            System.out.println("SHURIKEN RENDERER: First person context - letting overlay handle");
             return;
         }
 
         // For GUI and third-person contexts, render the GeckoLib TPS model (static)
         if (displayContext == ItemDisplayContext.GUI || isThirdPersonContext(displayContext)) {
-            System.out.println("SHURIKEN RENDERER: GUI/Third person context - rendering TPS model");
-            System.out.println("SHURIKEN RENDERER: Display context = " + displayContext);
 
             // Render GeckoLib TPS model
             try {
                 shurikenTPSRenderer.renderByItem(stack, displayContext, poseStack, buffer, packedLight, packedOverlay);
-                System.out.println("SHURIKEN RENDERER: TPS model render completed successfully");
             } catch (Exception e) {
-                System.out.println("SHURIKEN RENDERER: TPS model render failed: " + e.getMessage());
-                e.printStackTrace();
+                LOGGER.error("Failed to render shuriken TPS model", e);
             }
             return;
         }
 
         // For any other context, let Minecraft handle it
-        System.out.println("SHURIKEN RENDERER: Unknown context - letting Minecraft handle: " + displayContext);
     }
 
     private boolean isFirstPersonContext(ItemDisplayContext displayContext) {

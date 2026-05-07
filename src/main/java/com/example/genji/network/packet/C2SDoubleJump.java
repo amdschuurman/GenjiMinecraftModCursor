@@ -29,11 +29,8 @@ public class C2SDoubleJump {
         ctx.enqueueWork(() -> {
             ServerPlayer sp = ctx.getSender();
             if (sp != null) {
-                System.out.println("C2SDoubleJump: Received double jump request from " + sp.getName());
-                System.out.println("C2SDoubleJump: Player onGround=" + sp.onGround() + ", inWater=" + sp.isInWater() + ", passenger=" + sp.isPassenger());
                 DoubleJumpAbility.executeDoubleJump(sp);
             } else {
-                System.out.println("C2SDoubleJump: No sender found!");
             }
         });
         return true;

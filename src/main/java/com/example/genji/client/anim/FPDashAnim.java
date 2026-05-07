@@ -16,9 +16,6 @@ public final class FPDashAnim {
     public static void start(int duration) {
         long currentTick = gameTicks();
         
-        System.out.println("=== FPDashAnim.start() ===");
-        System.out.println("Old state - startTick: " + startTick + ", endTick: " + endTick + ", duration: " + durationTicks);
-        System.out.println("New dash - duration: " + duration + ", currentTick: " + currentTick);
         
         // Set new state
         durationTicks = Math.max(2, duration);
@@ -27,7 +24,6 @@ public final class FPDashAnim {
         wasJustStarted = true;
         lastTickChecked = currentTick;
         
-        System.out.println("Animation started - startTick: " + startTick + ", endTick: " + endTick + ", duration: " + durationTicks);
     }
 
     /** Called when the dash begins with default duration (legacy support). */
@@ -48,12 +44,10 @@ public final class FPDashAnim {
             // Keep "just started" flag for 2 ticks to ensure animation controllers see it
             if (wasJustStarted && currentTick > startTick + 1) {
                 wasJustStarted = false;
-                System.out.println("FPDashAnim: Cleared justStarted flag at tick " + currentTick + " (startTick was " + startTick + ")");
             }
             
             // Check if animation should end
             if (currentTick >= endTick) {
-                System.out.println("FPDashAnim: Animation ended at tick " + currentTick + " (endTick was " + endTick + ")");
                 clear();
                 return false;
             }
@@ -69,7 +63,6 @@ public final class FPDashAnim {
     }
 
     private static void clear() {
-        System.out.println("FPDashAnim: Clearing state");
         startTick = Long.MIN_VALUE;
         endTick = Long.MIN_VALUE;
         wasJustStarted = false;
@@ -78,7 +71,6 @@ public final class FPDashAnim {
     private static long gameTicks() {
         var mc = Minecraft.getInstance();
         if (mc.level == null) {
-            System.out.println("WARNING: FPDashAnim.gameTicks() called but level is null!");
             return 0L;
         }
         return mc.level.getGameTime();
@@ -86,7 +78,6 @@ public final class FPDashAnim {
     
     /** Force clear the animation state (for debugging). */
     public static void forceStop() {
-        System.out.println("FPDashAnim.forceStop() called");
         clear();
         durationTicks = 5;
     }

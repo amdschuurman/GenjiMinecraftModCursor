@@ -57,7 +57,6 @@ public final class FirstPersonDashOverlay {
         boolean justStarted = FPDashAnim.justStarted();
         
         if (isActive && !loggedOnce) {
-            System.out.println("FirstPersonDashOverlay: FPDashAnim is active, rendering dash overlay! justStarted: " + justStarted);
             loggedOnce = true;
         }
         if (!isActive) {
@@ -78,7 +77,6 @@ public final class FirstPersonDashOverlay {
         if (justStarted) {
             long currentTick = mc.level != null ? mc.level.getGameTime() : 0;
             if (currentTick != lastDashStartTick) {
-                System.out.println("FirstPersonDashOverlay: New dash detected, recreating DASH_STACK to reset GeckoLib state");
                 DASH_STACK = new ItemStack(ModItems.DRAGONBLADE.get());
                 lastDashStartTick = currentTick;
             }

@@ -66,7 +66,6 @@ public class ClientModEvents {
             LOGGER.info("[ClientModEvents] Total deflect layers added: " + layersAdded);
         } catch (Exception e) {
             LOGGER.error("[ClientModEvents] Error adding deflect layer:", e);
-            e.printStackTrace();
         }
     }
 }
