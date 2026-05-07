@@ -33,6 +33,16 @@ public class ShurikenEntity extends ThrowableItemProjectile implements GeoEntity
     private static final RawAnimation SPIN  = RawAnimation.begin().thenLoop("animation.shuriken_projectile.spin");
     private static final RawAnimation STUCK = RawAnimation.begin().thenLoop("animation.shuriken_projectile.stuck");
 
+    // Headshot threshold — hits within the upper ~17% of an entity's bbox count as headshots.
+    // Matches OW Genji where the head hitbox is roughly the top 1/6 of the model.
+    private static final double HEADSHOT_TOP_FRACTION = 0.83;
+    private static final float  HEADSHOT_DAMAGE_MULTIPLIER = 1.5f;
+
+    // Set to true while a headshot shuriken-hurt() call is on the stack so
+    // CommonEvents.onEntityHurt can dispatch the headshot hit sound packet.
+    private static final ThreadLocal<Boolean> SHURIKEN_HEADSHOT = ThreadLocal.withInitial(() -> false);
+    public static boolean wasShurikenHeadshot() { return Boolean.TRUE.equals(SHURIKEN_HEADSHOT.get()); }
+
 
     // Synchronized entity data
     private static final EntityDataAccessor<Boolean> DATA_STUCK = SynchedEntityData.defineId(ShurikenEntity.class, EntityDataSerializers.BOOLEAN);
@@ -150,15 +160,34 @@ public class ShurikenEntity extends ThrowableItemProjectile implements GeoEntity
             if (hit.getEntity() instanceof ShurikenEntity) {
                 return;
             }
-            
+
+            var target = hit.getEntity();
             var owner = getOwner();
             DamageSource src = owner instanceof LivingEntity le ? damageSources().thrown(this, le) : damageSources().generic();
-            hit.getEntity().hurt(src, GenjiConfig.SHURIKEN_DAMAGE_PER_STAR.get().floatValue()); // Shuriken damage (configurable)
-            
-            // Play hit sound
+
+            // Headshot detection (OW canon: 1.5x on head). We compare the hit
+            // location's Y against the top fraction of the target's bbox so it
+            // works for any entity size, not just players.
+            double hitY = hit.getLocation().y;
+            double headLine = target.getY() + target.getBbHeight() * HEADSHOT_TOP_FRACTION;
+            boolean isHeadshot = hitY >= headLine;
+
+            float baseDamage = GenjiConfig.SHURIKEN_DAMAGE_PER_STAR.get().floatValue();
+            float damage = isHeadshot ? baseDamage * HEADSHOT_DAMAGE_MULTIPLIER : baseDamage;
+
+            // Flag this hurt() call as a shuriken headshot so CommonEvents can
+            // dispatch the dedicated headshot hit-sound packet to the owner.
+            SHURIKEN_HEADSHOT.set(isHeadshot);
+            try {
+                target.hurt(src, damage);
+            } finally {
+                SHURIKEN_HEADSHOT.set(false);
+            }
+
+            // Generic ambient hit sound (level-broadcast — owner-confirm sound
+            // is dispatched from CommonEvents.onEntityHurt).
             playSound(net.minecraft.sounds.SoundEvents.TRIDENT_HIT, 0.5f, 1.2f);
-            
-            // Disappear on hit
+
             discard();
         }
     }

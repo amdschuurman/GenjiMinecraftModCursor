@@ -248,12 +248,16 @@ public class CommonEvents {
             // Send hit sound packet to client
             
             if (shurikenHit) {
-                // Shuriken hit sound
-                if (data.isNanoActive()) {
-                    ModNetwork.CHANNEL.sendTo(new S2CPlayHitSound("shuriken_nano"), sp.connection.connection, net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT);
+                // Owner-confirm hit sound: headshot wins, then nano-empowered, then plain.
+                String soundType;
+                if (ShurikenEntity.wasShurikenHeadshot()) {
+                    soundType = "headshot";
+                } else if (data.isNanoActive()) {
+                    soundType = "shuriken_nano";
                 } else {
-                    ModNetwork.CHANNEL.sendTo(new S2CPlayHitSound("shuriken"), sp.connection.connection, net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT);
+                    soundType = "shuriken";
                 }
+                ModNetwork.CHANNEL.sendTo(new S2CPlayHitSound(soundType), sp.connection.connection, net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT);
             } else if (holdingShuriken) {
                 // Dash damage hit sound (when holding shurikens)
                 if (data.isNanoActive()) {
