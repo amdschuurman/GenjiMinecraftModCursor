@@ -30,9 +30,6 @@ public final class DragonbladeCombat {
     private static final ThreadLocal<Boolean> INTERNAL_DRAGONBLADE_DAMAGE = ThreadLocal.withInitial(() -> false);
     public static boolean isInternalDragonbladeDamage() { return Boolean.TRUE.equals(INTERNAL_DRAGONBLADE_DAMAGE.get()); }
 
-    // Combo window: 0.5 seconds (10 ticks) AFTER recovery completes to chain LEFT -> RIGHT
-    private static final int COMBO_WINDOW_TICKS = 10;
-    
     // Track when last swing fully completed (after recovery) for combo window
     private static final Map<UUID, Long> LAST_SWING_COMPLETION_TIME = new ConcurrentHashMap<>();
 
@@ -72,7 +69,7 @@ public final class DragonbladeCombat {
         Long lastCompletionTime = LAST_SWING_COMPLETION_TIME.get(id);
         if (lastCompletionTime != null && data.canSwingNow()) {
             long timeSinceCompletion = nowTicks - lastCompletionTime;
-            if (timeSinceCompletion >= COMBO_WINDOW_TICKS) {
+            if (timeSinceCompletion >= GenjiConfig.DRAGONBLADE_COMBO_WINDOW_TICKS.get()) {
                 // Combo window expired, reset to LEFT
                 data.resetSwingToLeft();
                 LAST_SWING_COMPLETION_TIME.remove(id);
@@ -92,7 +89,7 @@ public final class DragonbladeCombat {
                 isLeftSwing = true;
             } else {
                 long timeSinceCompletion = nowTicks - lastCompletionTime;
-                if (timeSinceCompletion < COMBO_WINDOW_TICKS && data.nextSwingIsRight()) {
+                if (timeSinceCompletion < GenjiConfig.DRAGONBLADE_COMBO_WINDOW_TICKS.get() && data.nextSwingIsRight()) {
                     // Within combo window and ready for RIGHT swing
                     isLeftSwing = false;
                 } else {
@@ -169,11 +166,12 @@ public final class DragonbladeCombat {
         Vec3 playerPos = sp.getEyePosition();
         Vec3 lookVec = sp.getLookAngle();
         
-        // 5 block range for dragonblade
-        double range = 5.0;
-        
+        // Range and Y-inflate read from config (DragonbladeCombat group)
+        double range = GenjiConfig.DRAGONBLADE_REACH.get();
+        double heightInflate = GenjiConfig.DRAGONBLADE_HEIGHT.get();
+
         // Get all entities in a cone in front of the player
-        AABB searchBox = sp.getBoundingBox().inflate(range, 1.0, range);
+        AABB searchBox = sp.getBoundingBox().inflate(range, heightInflate, range);
         var entities = level.getEntitiesOfClass(LivingEntity.class, searchBox, 
             entity -> entity != sp && entity.isAlive() && !entity.isDeadOrDying() && sp.canAttack(entity));
         

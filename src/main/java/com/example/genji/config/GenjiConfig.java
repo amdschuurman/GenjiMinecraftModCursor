@@ -107,10 +107,10 @@ public final class GenjiConfig {
 
         // Dragonblade combat
         b.push("DragonbladeCombat");
-        DRAGONBLADE_COMBO_WINDOW_TICKS = b.defineInRange("ComboWindowTicks", 7, 0, 200);
-        DRAGONBLADE_REACH   = b.defineInRange("Reach",          3.2, 0.0, 64.0);
+        DRAGONBLADE_COMBO_WINDOW_TICKS = b.defineInRange("ComboWindowTicks", 10, 0, 200);
+        DRAGONBLADE_REACH   = b.defineInRange("Reach",          5.0, 0.0, 64.0);
         DRAGONBLADE_WIDTH   = b.defineInRange("Width",          2.6, 0.0, 64.0);
-        DRAGONBLADE_HEIGHT  = b.defineInRange("Height",         2.4, 0.0, 64.0);
+        DRAGONBLADE_HEIGHT  = b.defineInRange("Height",         1.0, 0.0, 64.0);
         DAMAGE_PER_DRAGONBLADE_SWING = b.defineInRange("DamagePerSwing", 11.0, 0.0, 1_000_000.0);
         b.pop();
 
@@ -181,6 +181,27 @@ public final class GenjiConfig {
         double blade = DAMAGE_PER_DRAGONBLADE_SWING.get();
         if (Math.abs(blade - 8.8) < 1e-3 || blade >= 40.0 || blade <= 0.0) {
             DAMAGE_PER_DRAGONBLADE_SWING.set(11.0);
+            changed = true;
+        }
+
+        // Migrate stale dragonblade-combat defaults to match the actual hardcoded
+        // behavior used before these configs were wired up. Only migrates exact
+        // old-default matches so explicitly tuned values are preserved.
+        int comboWindow = DRAGONBLADE_COMBO_WINDOW_TICKS.get();
+        if (comboWindow == 7) {
+            DRAGONBLADE_COMBO_WINDOW_TICKS.set(10);
+            changed = true;
+        }
+
+        double reach = DRAGONBLADE_REACH.get();
+        if (Math.abs(reach - 3.2) < 1e-3) {
+            DRAGONBLADE_REACH.set(5.0);
+            changed = true;
+        }
+
+        double height = DRAGONBLADE_HEIGHT.get();
+        if (Math.abs(height - 2.4) < 1e-3) {
+            DRAGONBLADE_HEIGHT.set(1.0);
             changed = true;
         }
 
