@@ -5,6 +5,7 @@ import com.example.genji.content.ShurikenEntity;
 import com.example.genji.network.ModNetwork;
 import com.example.genji.network.packet.S2CShurikenFPAnim;
 import com.example.genji.network.packet.S2CPlayerPunchAnim;
+import com.example.genji.registry.ModItems;
 import com.example.genji.registry.ModSounds;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -72,9 +73,22 @@ public class ShurikenCombat {
             for (ServerPlayer sp : lvl.players()) {
                 State s = state(sp);
 
-                // HARD STOP while unsheathing, active blade, sheathing, dashing, or deflecting
                 var data = GenjiDataProvider.getOrNull(sp);
                 if (data == null) continue;
+
+                // Defensive: don't trust client-held flags if the player is no
+                // longer actually holding a shuriken in main hand. Closes the
+                // hand-swap-while-pressed race where the client doesn't send a
+                // RELEASE event (e.g. number-key hotbar swap mid-press).
+                if (!sp.getMainHandItem().is(ModItems.SHURIKEN.get())) {
+                    s.primaryHeld = false;
+                    s.secondaryHeld = false;
+                    s.burstShotsLeft = 0;
+                    if (s.sharedCd > 0) s.sharedCd--;
+                    continue;
+                }
+
+                // HARD STOP while unsheathing, active blade, sheathing, dashing, or deflecting
                 if (data.isCastingBlade() || data.isBladeActive() || data.isSheathing()
                         || DashAbility.isDashing(sp) || data.isDeflectActive()) {
                     s.primaryHeld = false;

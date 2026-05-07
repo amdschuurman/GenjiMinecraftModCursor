@@ -36,6 +36,20 @@ public final class DragonbladeCombat {
     public static void perPlayerTick(ServerPlayer sp) {
         var data = GenjiDataProvider.getOrNull(sp);
         if (data == null) return;
+
+        // Defensive: if the player is in any blade phase (cast/active/sheathe)
+        // but their main hand is no longer a dragonblade (admin /clear, mod
+        // conflict, capability desync), the blade is functionally broken.
+        // Force-cancel rather than running a zombie phase with no weapon.
+        boolean inAnyBladePhase = data.isBladeActive() || data.isCastingBlade() || data.isSheathing();
+        if (inAnyBladePhase && !(sp.getMainHandItem().getItem() instanceof DragonbladeItem)) {
+            data.cancelBlade();
+            data.clearBladeSlot();
+            STARTUP_IN_PROGRESS.remove(sp.getUUID());
+            LAST_SWING_COMPLETION_TIME.remove(sp.getUUID());
+            return;
+        }
+
         if (!data.isBladeActive()) {
             STARTUP_IN_PROGRESS.remove(sp.getUUID());
             LAST_SWING_COMPLETION_TIME.remove(sp.getUUID());

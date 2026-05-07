@@ -117,15 +117,26 @@ public final class ClientEvents {
         }
     }
 
-    /** If a GUI opens while we were holding, send releases so server stops firing. */
+    /**
+     * Send button-release packets if either:
+     *   (a) a GUI just opened while a button was held — vanilla doesn't fire
+     *       a RELEASE event in that case;
+     *   (b) the player swapped off the Genji item while a button was held
+     *       (number-key / mouse-wheel hotbar swap) — vanilla doesn't fire a
+     *       RELEASE for the swap either, so the server-side held flag would
+     *       persist and keep firing shurikens.
+     */
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent e) {
         if (e.phase != TickEvent.Phase.END) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
-        boolean hasScreen = mc.screen != null;
-        if (hasScreen && !hadScreenLastTick) {
+        final boolean hasScreen = mc.screen != null;
+        final boolean holdingGenji = !hasScreen && holdingGenji(mc.player.getMainHandItem());
+        final boolean shouldRelease = hasScreen || !holdingGenji;
+
+        if (shouldRelease) {
             if (primaryHeldSent) {
                 ModNetwork.CHANNEL.sendToServer(new C2SSetPrimaryHeld(false));
                 primaryHeldSent = false;

@@ -53,6 +53,13 @@ public final class DashAbility {
     public static void startDash(ServerPlayer sp, boolean bladeActive) {
         var data = GenjiDataProvider.getOrNull(sp);
         if (data == null) return;
+
+        // Don't restart while a dash is already mid-flight. Kill-resets-cooldown
+        // can clear data.dashCooldown to 0 mid-dash; without this gate a fresh
+        // C2SActivateDash would re-anchor the ACTIVE entry and teleport the
+        // player off the current dash path.
+        if (ACTIVE.containsKey(sp.getUUID())) return;
+
         boolean cancelDeflect = data.isDeflectActive();
         if (!data.tryDash()) return; // cooldown gate
 

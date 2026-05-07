@@ -80,10 +80,11 @@ public final class AbilityHud {
 
         // --- Dash ---
         String dashRight = ClientGenjiData.dashCooldown > 0 ? fmtTicks(ClientGenjiData.dashCooldown) : "READY";
+        int dashCooldownTotal = Math.max(1, GenjiConfig.secToTicksClamped(GenjiConfig.DASH_COOLDOWN_SECONDS));
         drawBarBox(g, x, y, w, h, "Dash",
                 dashRight,
                 ClientGenjiData.dashCooldown,
-                Math.max(ClientGenjiData.dashCooldown, 160),
+                dashCooldownTotal,
                 ABILITY_BAR
         );
     }
