@@ -130,8 +130,7 @@ public final class DeflectCombat {
             AdvancementHelper.grantAdvancement(sp, ResourceLocation.fromNamespaceAndPath("genji", "first_deflect"));
             
             int variant = 1 + sp.getRandom().nextInt(3);
-            ModNetwork.CHANNEL.sendTo(new S2CDeflectHit(variant),
-                    sp.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+            ModNetwork.sendToPlayer(sp, new S2CDeflectHit(variant));
         }
     }
 

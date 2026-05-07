@@ -344,10 +344,6 @@ public final class CommonEvents {
     }
 
     private static void sendHitSound(ServerPlayer sp, String soundType) {
-        ModNetwork.CHANNEL.sendTo(
-                new S2CPlayHitSound(soundType),
-                sp.connection.connection,
-                net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT
-        );
+        ModNetwork.sendToPlayer(sp, new S2CPlayHitSound(soundType));
     }
 }

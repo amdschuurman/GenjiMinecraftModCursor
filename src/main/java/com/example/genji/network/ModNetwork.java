@@ -100,28 +100,33 @@ public class ModNetwork {
     }
 
     /**
+     * Send any packet to a single player. Replaces the verbose
+     * {@code CHANNEL.sendTo(packet, sp.connection.connection, NetworkDirection.PLAY_TO_CLIENT)}
+     * idiom — same semantics, one line.
+     */
+    public static <MSG> void sendToPlayer(ServerPlayer sp, MSG packet) {
+        CHANNEL.sendTo(packet, sp.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+    }
+
+    /**
      * Send a full GenjiData state sync to the client and clear the dirty flag.
-     * Use this from event-response paths that always have a state change.
+     * Use from event-response paths that always have a state change.
      */
     public static void syncTo(ServerPlayer sp, GenjiData data) {
-        CHANNEL.sendTo(
-                new S2CSyncGenjiData(
-                        data.getUlt(), data.getNano(),
-                        data.getBladeTicks(), data.getDeflectTicks(),
-                        data.getDashCooldown(), data.getDeflectCooldown(),
-                        data.getBladeCastTicks(), data.getBladeSheatheTicks(),
-                        data.getNanoBoostTicks()
-                ),
-                sp.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT
-        );
+        sendToPlayer(sp, new S2CSyncGenjiData(
+                data.getUlt(), data.getNano(),
+                data.getBladeTicks(), data.getDeflectTicks(),
+                data.getDashCooldown(), data.getDeflectCooldown(),
+                data.getBladeCastTicks(), data.getBladeSheatheTicks(),
+                data.getNanoBoostTicks()
+        ));
         data.markSynced();
     }
 
     /**
      * Send a sync only if state actually changed since the last send.
-     * Use this from per-tick paths so idle players don't receive
-     * redundant packets every tick.
+     * Use from per-tick paths so idle players don't receive redundant
+     * packets every tick.
      */
     public static void syncIfDirty(ServerPlayer sp, GenjiData data) {
         if (data.isDirty()) syncTo(sp, data);

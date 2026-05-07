@@ -110,11 +110,7 @@ public final class DashAbility {
         ACTIVE.put(sp.getUUID(), state);
 
         // Send dash info to client for smooth interpolation
-        ModNetwork.CHANNEL.sendTo(
-            new S2CStartDash(startPos, end, scaledDuration),
-            sp.connection.connection,
-            net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT
-        );
+        ModNetwork.sendToPlayer(sp, new S2CStartDash(startPos, end, scaledDuration));
 
         // Audio & prep
         level.playSound(null, sp, ModSounds.DASH.get(), SoundSource.PLAYERS, 2.0f, 1.0f);
@@ -198,19 +194,10 @@ public final class DashAbility {
             
             // Check if damage was actually dealt and send hit sound
             if (wasAlive && e instanceof LivingEntity) {
-                
-                // Get player data to check nano status
-                sp.getCapability(com.example.genji.capability.GenjiDataProvider.CAPABILITY).ifPresent(data -> {
-                    boolean isNanoActive = data.isNanoActive();
-                    
-                    // Always play shuriken hit sounds for dash (normal or nano based on status)
-                    String soundType = isNanoActive ? "shuriken_nano" : "shuriken";
-                    com.example.genji.network.ModNetwork.CHANNEL.sendTo(
-                        new com.example.genji.network.packet.S2CPlayHitSound(soundType), 
-                        sp.connection.connection, 
-                        net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT
-                    );
-                });
+                // Dash hits use the shuriken-flavored owner-confirm sound (nano variant if nano active).
+                var data = GenjiDataProvider.getOrNull(sp);
+                String soundType = (data != null && data.isNanoActive()) ? "shuriken_nano" : "shuriken";
+                ModNetwork.sendToPlayer(sp, new com.example.genji.network.packet.S2CPlayHitSound(soundType));
             }
         }
         } finally {

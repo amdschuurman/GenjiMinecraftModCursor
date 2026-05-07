@@ -120,11 +120,8 @@ public final class DragonbladeCombat {
             data.setNextSwingRight(isLeftSwing);
 
             // Trigger first-person animation
-            ModNetwork.CHANNEL.sendTo(
-                    new S2CDragonbladeFPAnim(isLeftSwing ? S2CDragonbladeFPAnim.Dir.LEFT : S2CDragonbladeFPAnim.Dir.RIGHT),
-                    sp.connection.connection,
-                    NetworkDirection.PLAY_TO_CLIENT
-            );
+            ModNetwork.sendToPlayer(sp,
+                    new S2CDragonbladeFPAnim(isLeftSwing ? S2CDragonbladeFPAnim.Dir.LEFT : S2CDragonbladeFPAnim.Dir.RIGHT));
 
             // Trigger third-person player swing animation
             sp.swing(sp.getUsedItemHand());

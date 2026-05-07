@@ -155,19 +155,9 @@ public class ShurikenCombat {
         int cd = nextSecondaryRecoveryTicks(s);
         s.sharedCd = cd;
 
-        // Trigger FP hand animation once for the fan
-        ModNetwork.CHANNEL.sendTo(
-                new S2CShurikenFPAnim(S2CShurikenFPAnim.Type.M2_FAN),
-                sp.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT
-        );
-
-        // Trigger third-person player single air-punch animation for M2
-        ModNetwork.CHANNEL.sendTo(
-                new S2CPlayerPunchAnim(S2CPlayerPunchAnim.Type.SINGLE_PUNCH),
-                sp.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT
-        );
+        // FP hand animation once for the fan; TPS single air-punch for the throw.
+        ModNetwork.sendToPlayer(sp, new S2CShurikenFPAnim(S2CShurikenFPAnim.Type.M2_FAN));
+        ModNetwork.sendToPlayer(sp, new S2CPlayerPunchAnim(S2CPlayerPunchAnim.Type.SINGLE_PUNCH));
 
         sp.level().playSound(
                 null,
@@ -195,19 +185,9 @@ public class ShurikenCombat {
 
         level.addFreshEntity(proj);
 
-        // Trigger FP hand animation per shot for M1
-        ModNetwork.CHANNEL.sendTo(
-                new S2CShurikenFPAnim(S2CShurikenFPAnim.Type.M1_SHOT),
-                sp.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT
-        );
-
-        // Trigger third-person player air-punch animation for M1 burst
-        ModNetwork.CHANNEL.sendTo(
-                new S2CPlayerPunchAnim(S2CPlayerPunchAnim.Type.BURST_PUNCH),
-                sp.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT
-        );
+        // FP hand animation per M1 shot; TPS air-punch for the throw.
+        ModNetwork.sendToPlayer(sp, new S2CShurikenFPAnim(S2CShurikenFPAnim.Type.M1_SHOT));
+        ModNetwork.sendToPlayer(sp, new S2CPlayerPunchAnim(S2CPlayerPunchAnim.Type.BURST_PUNCH));
     }
 
     // === Fan of 3 (left/center/right) ===
