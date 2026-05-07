@@ -7,12 +7,12 @@ import software.bernie.geckolib.model.GeoModel;
 
 public class WakizashiFPSModel extends GeoModel<DragonbladeItem> {
     @Override public ResourceLocation getModelResource(DragonbladeItem a) {
-        return new ResourceLocation(GenjiMod.MODID, "geo/wakizashi.fps.model.geo.json");
+        return ResourceLocation.fromNamespaceAndPath(GenjiMod.MODID, "geo/wakizashi.fps.model.geo.json");
     }
     @Override public ResourceLocation getTextureResource(DragonbladeItem a) {
-        return new ResourceLocation(GenjiMod.MODID, "textures/item/dragonblade.png");
+        return ResourceLocation.fromNamespaceAndPath(GenjiMod.MODID, "textures/item/dragonblade.png");
     }
     @Override public ResourceLocation getAnimationResource(DragonbladeItem a) {
-        return new ResourceLocation(GenjiMod.MODID, "animations/shurikens.fps.animations.json");
+        return ResourceLocation.fromNamespaceAndPath(GenjiMod.MODID, "animations/shurikens.fps.animations.json");
     }
 }
