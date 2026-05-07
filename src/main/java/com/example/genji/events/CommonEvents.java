@@ -165,6 +165,13 @@ public class CommonEvents {
 
     @SubscribeEvent
     public static void onEntityHurt(LivingHurtEvent e) {
+        // Swift Strike i-frames: Genji is invulnerable during dash motion.
+        // OW canon — applies to all damage sources including environmental.
+        if (e.getEntity() instanceof ServerPlayer victim && DashAbility.isDashing(victim)) {
+            e.setCanceled(true);
+            return;
+        }
+
         // Attribute damage to a player (direct or projectile owner)
         ServerPlayer attacker = null;
         Entity srcEntity = e.getSource().getEntity();
