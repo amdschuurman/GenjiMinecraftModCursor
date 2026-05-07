@@ -1,10 +1,4 @@
 {
   "replace": false,
-  "values": [
-    /* Add non-Projectile entity types here to make them reflectable.
-       Example entries (replace with real IDs from other mods):
-       "warium:plasma_orb",
-       "warium:arc_bolt"
-    */
-  ]
+  "values": []
 }
