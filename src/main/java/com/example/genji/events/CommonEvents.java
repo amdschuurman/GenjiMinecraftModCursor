@@ -43,38 +43,40 @@ public class CommonEvents {
             // advance all timers once per tick
             data.tick();
             
-            // === Nano-Boost: apply buffs while active (server-side)
-            if (!p.level().isClientSide && data.isNanoActive() && p instanceof ServerPlayer sp) {
-                int dur = 4; // reapply briefly each tick so effects persist
-                if (GenjiConfig.NANO_RESISTANCE_AMPLIFIER.get() >= 0)
-                    sp.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, dur, GenjiConfig.NANO_RESISTANCE_AMPLIFIER.get(),  false, false, true));
-                if (GenjiConfig.NANO_FIRE_RES_AMPLIFIER.get() >= 0)
-                    sp.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,   dur, GenjiConfig.NANO_FIRE_RES_AMPLIFIER.get(),    false, false, true));
-                if (GenjiConfig.NANO_ABSORPTION_AMPLIFIER.get() >= 0)
-                    sp.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,        dur, GenjiConfig.NANO_ABSORPTION_AMPLIFIER.get(),  false, false, true));
+            // === Nano-Boost & Speed effects (server-side)
+            // Periodic effects are throttled to once every 4 ticks with a 6-tick
+            // duration (2 ticks of overlap, no gap). The previous code re-applied
+            // every server tick — 4x more effect-add calls than necessary, since
+            // addEffect goes through Forge's effect-add pipeline + client sync
+            // each call. The one-shot HEAL on activation is kept ungated so it
+            // never gets missed because of the throttle phase.
+            if (!p.level().isClientSide && p instanceof ServerPlayer sp) {
+                final boolean nanoActive  = data.isNanoActive();
+                final boolean bladeActive = data.isBladeActive();
 
-                // one-shot: instant health on activation tick
-                if (data.nanoJustActivated()) {
+                if (nanoActive && data.nanoJustActivated()) {
                     int amp = Math.max(0, GenjiConfig.NANO_INSTANT_HEALTH_AMPLIFIER.get());
                     sp.addEffect(new MobEffectInstance(MobEffects.HEAL, 1, amp, false, false, true));
                 }
-            }
 
-            // === Speed Effects: Dragonblade + Nanoboost combined logic (server-side)
-            if (!p.level().isClientSide && p instanceof ServerPlayer sp) {
-                int dur = 4; // reapply briefly each tick so effects persist
-                boolean nanoActive = data.isNanoActive();
-                boolean bladeActive = data.isBladeActive();
-                
-                if (nanoActive && bladeActive) {
-                    // Both active: Speed 4 (amplifier 3)
-                    sp.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, dur, 3, false, false, true));
-                } else if (nanoActive) {
-                    // Only nanoboost: Speed 2 (amplifier 1)
-                    sp.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, dur, 1, false, false, true));
-                } else if (bladeActive) {
-                    // Only dragonblade: Speed 2 (amplifier 1)
-                    sp.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, dur, 1, false, false, true));
+                final boolean periodicReapplyTick = (sp.tickCount & 3) == 0;
+                if (periodicReapplyTick) {
+                    final int dur = 6;
+
+                    if (nanoActive) {
+                        if (GenjiConfig.NANO_RESISTANCE_AMPLIFIER.get() >= 0)
+                            sp.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, dur, GenjiConfig.NANO_RESISTANCE_AMPLIFIER.get(), false, false, true));
+                        if (GenjiConfig.NANO_FIRE_RES_AMPLIFIER.get() >= 0)
+                            sp.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, dur, GenjiConfig.NANO_FIRE_RES_AMPLIFIER.get(), false, false, true));
+                        if (GenjiConfig.NANO_ABSORPTION_AMPLIFIER.get() >= 0)
+                            sp.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, dur, GenjiConfig.NANO_ABSORPTION_AMPLIFIER.get(), false, false, true));
+                    }
+
+                    if (nanoActive || bladeActive) {
+                        // Speed IV when both active, Speed II when only one
+                        int speedAmp = (nanoActive && bladeActive) ? 3 : 1;
+                        sp.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, dur, speedAmp, false, false, true));
+                    }
                 }
             }
 
