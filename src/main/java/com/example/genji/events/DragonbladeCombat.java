@@ -146,8 +146,11 @@ public final class DragonbladeCombat {
         boolean lastWasRightToLeft = !data.nextSwingIsRight();
         data.startSwingRecovery(lastWasRightToLeft);
 
-        // Let vanilla/Better Combat handle damage - no custom damage system
-        // Vanilla will handle sweeping edge and area damage naturally
+        // Apply damage at the impact frame (after startup, before recovery)
+        // so the swing has a small wind-up before contact — matches pre-S9
+        // OW Genji's slash feel. Vanilla/Better Combat damage is suppressed
+        // in CommonEvents.onEntityHurt; this LOS routine is the only path.
+        triggerAttack(sp);
     }
 
     private static void triggerAttack(ServerPlayer sp) {
