@@ -26,7 +26,8 @@ public class C2SActivateDash {
             ServerPlayer sp = ctx.get().getSender();
             if (sp == null) return;
 
-            var data = GenjiDataProvider.get(sp);
+            var data = GenjiDataProvider.getOrNull(sp);
+            if (data == null) return;
 
             // Remember state before trying to dash
             boolean wasSheathing = data.isSheathing();

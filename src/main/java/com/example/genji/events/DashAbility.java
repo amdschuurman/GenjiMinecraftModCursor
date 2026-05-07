@@ -51,7 +51,8 @@ public final class DashAbility {
 
     /** Called from packet to start a dash if cooldown allows. */
     public static void startDash(ServerPlayer sp, boolean bladeActive) {
-        var data = GenjiDataProvider.get(sp);
+        var data = GenjiDataProvider.getOrNull(sp);
+        if (data == null) return;
         boolean cancelDeflect = data.isDeflectActive();
         if (!data.tryDash()) return; // cooldown gate
 

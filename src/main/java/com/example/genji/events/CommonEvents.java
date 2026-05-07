@@ -209,8 +209,8 @@ public class CommonEvents {
             var item = attacker.getMainHandItem();
             boolean isDragonblade = !item.isEmpty() && item.getItem() instanceof com.example.genji.content.DragonbladeItem;
             if (isDragonblade) {
-                var data = com.example.genji.capability.GenjiDataProvider.get(attacker);
-                if (data.isBladeActive()) {
+                var data = com.example.genji.capability.GenjiDataProvider.getOrNull(attacker);
+                if (data != null && data.isBladeActive()) {
                     // Allow our own custom hits and dash hits through, cancel others
                     if (!com.example.genji.events.DragonbladeCombat.isInternalDragonbladeDamage()
                             && !com.example.genji.events.DashAbility.isInternalDashDamage()) {

@@ -21,7 +21,8 @@ public class C2SSetPrimaryHeld {
             ServerPlayer sp = ctx.get().getSender();
             if (sp == null) return;
 
-            var data = GenjiDataProvider.get(sp);
+            var data = GenjiDataProvider.getOrNull(sp);
+            if (data == null) return;
 
             // === HARD LOCK while SHEATHING: no blade swings, no shurikens ===
             if (data.isSheathing()) {

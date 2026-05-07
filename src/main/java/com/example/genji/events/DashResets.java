@@ -59,7 +59,8 @@ public final class DashResets {
 
         // Killer gets reset and plays kill sound
         if (e.getSource().getEntity() instanceof ServerPlayer killer) {
-            GenjiDataProvider.get(killer).clearDashCooldown();
+            var killerData = GenjiDataProvider.getOrNull(killer);
+            if (killerData != null) killerData.clearDashCooldown();
             ModNetwork.CHANNEL.sendTo(new S2CPlayHitSound("kill"), killer.connection.connection, net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT);
         }
 
@@ -72,7 +73,8 @@ public final class DashResets {
                 if (now - when <= ASSIST_WINDOW_TICKS) {
                     ServerPlayer sp = sl.getServer().getPlayerList().getPlayer(attackerId);
                     if (sp != null) {
-                        GenjiDataProvider.get(sp).clearDashCooldown();
+                        var spData = GenjiDataProvider.getOrNull(sp);
+                        if (spData != null) spData.clearDashCooldown();
                         // Play kill sound for assist (if not already played for direct kill)
                         if (!(e.getSource().getEntity() instanceof ServerPlayer killer && killer.getUUID().equals(attackerId))) {
                             ModNetwork.CHANNEL.sendTo(new S2CPlayHitSound("kill"), sp.connection.connection, net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT);

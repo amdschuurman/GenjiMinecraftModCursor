@@ -34,7 +34,8 @@ public final class DragonbladeCombat {
     private static final Map<UUID, Long> LAST_SWING_COMPLETION_TIME = new ConcurrentHashMap<>();
 
     public static void perPlayerTick(ServerPlayer sp) {
-        var data = GenjiDataProvider.get(sp);
+        var data = GenjiDataProvider.getOrNull(sp);
+        if (data == null) return;
         if (!data.isBladeActive()) {
             STARTUP_IN_PROGRESS.remove(sp.getUUID());
             LAST_SWING_COMPLETION_TIME.remove(sp.getUUID());
@@ -140,8 +141,8 @@ public final class DragonbladeCombat {
     }
 
     public static void onSwingLand(ServerPlayer sp) {
-        var data  = GenjiDataProvider.get(sp);
-        if (!data.isBladeActive()) return;
+        var data  = GenjiDataProvider.getOrNull(sp);
+        if (data == null || !data.isBladeActive()) return;
 
         boolean lastWasRightToLeft = !data.nextSwingIsRight();
         data.startSwingRecovery(lastWasRightToLeft);
@@ -176,8 +177,8 @@ public final class DragonbladeCombat {
             entity -> entity != sp && entity.isAlive() && !entity.isDeadOrDying() && sp.canAttack(entity));
         
         // Check nanoboost status for damage multiplier
-        var data = GenjiDataProvider.get(sp);
-        boolean nanoboostActive = data.isNanoActive();
+        var data = GenjiDataProvider.getOrNull(sp);
+        boolean nanoboostActive = data != null && data.isNanoActive();
         float damageMultiplier = nanoboostActive ? 1.5f : 1.0f; // +50% damage with nanoboost
         float baseDamage = GenjiConfig.DAMAGE_PER_DRAGONBLADE_SWING.get().floatValue(); // Configurable base damage
         float finalDamage = baseDamage * damageMultiplier;

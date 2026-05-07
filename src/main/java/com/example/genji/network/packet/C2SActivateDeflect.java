@@ -19,7 +19,8 @@ public class C2SActivateDeflect {
         ctx.get().enqueueWork(() -> {
             ServerPlayer sp = ctx.get().getSender();
             if (sp == null) return;
-            var data = GenjiDataProvider.get(sp);
+            var data = GenjiDataProvider.getOrNull(sp);
+            if (data == null) return;
 
             if (data.isDeflectActive()) {
                 // Manual cancel: stop deflect & start cooldown — NO end sound here

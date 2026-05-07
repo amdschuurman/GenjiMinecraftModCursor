@@ -130,13 +130,9 @@ public final class DeflectCombat {
         }
     }
 
-    /** Probeert GenjiData te lezen zonder crash; retourneert null als (nog) niet beschikbaar. */
+    /** Read GenjiData without throwing; returns null if not (yet) attached. */
     private static com.example.genji.capability.GenjiData safeGetData(ServerPlayer sp) {
-        try {
-            return com.example.genji.capability.GenjiDataProvider.get(sp);
-        } catch (IllegalStateException ignored) {
-            return null;
-        }
+        return com.example.genji.capability.GenjiDataProvider.getOrNull(sp);
     }
 
     private static double minSpeed(Projectile p) {
