@@ -237,8 +237,13 @@ public final class DragonbladeCombat {
                 continue; // Blocked by something
             }
             
-            // Apply damage
+            // Apply damage and play the slash-hit ambient sound at the victim's
+            // position so everyone nearby hears it (server-broadcast, not a
+            // per-player owner-confirm packet).
             entity.hurt(level.damageSources().playerAttack(sp), finalDamage);
+            level.playSound(null, entity.blockPosition(),
+                    ModSounds.DRAGONBLADE_HIT.get(),
+                    net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
         }
         } finally {
             INTERNAL_DRAGONBLADE_DAMAGE.set(false);
