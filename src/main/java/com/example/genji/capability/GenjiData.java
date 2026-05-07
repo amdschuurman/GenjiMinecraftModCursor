@@ -139,7 +139,7 @@ public class GenjiData {
         bladeNextRight = false; // Always start with LEFT swing
         
         // Reset dash cooldown when dragonblade activates
-        resetDashCooldown();
+        clearDashCooldown();
         
         dirty = true;
     }
@@ -158,9 +158,14 @@ public class GenjiData {
     }
 
     public void cancelBlade() {
-        if (bladeTicks > 0)       { bladeTicks = 0; dirty = true; }
-        if (bladeCastTicks > 0)   { bladeCastTicks = 0; dirty = true; }
-        if (bladeSheatheTicks > 0){ bladeSheatheTicks = 0; dirty = true; }
+        if (bladeTicks > 0)        { bladeTicks = 0; dirty = true; }
+        if (bladeCastTicks > 0)    { bladeCastTicks = 0; dirty = true; }
+        if (bladeSheatheTicks > 0) { bladeSheatheTicks = 0; dirty = true; }
+        // Match activateBlade(): always start fresh blades on LEFT.
+        bladeNextRight = false;
+        bladeEndingPlayed = false;
+        bladeSwingStartupTicks = 0;
+        bladeSwingRecoverTicks = 0;
     }
 
     public boolean bladeEndingPlayed() { return bladeEndingPlayed; }
@@ -171,10 +176,9 @@ public class GenjiData {
     public void clearBladeSlot()        { bladeSlot = -1; dirty = true; }
 
     // ====== SWINGS (apply Nano speed multiplier) ======
-    public boolean isNextSwingRight()   { return bladeNextRight; }
-    public boolean nextSwingIsRight()   { return bladeNextRight; }
-    public void setNextSwingRight(boolean v){ bladeNextRight = v; dirty = true; }
-    public void resetSwingToLeft()      { bladeNextRight = false; dirty = true; }
+    public boolean nextSwingIsRight()        { return bladeNextRight; }
+    public void setNextSwingRight(boolean v) { bladeNextRight = v; dirty = true; }
+    public void resetSwingToLeft()           { bladeNextRight = false; dirty = true; }
 
     public int  getSwingStartupTicks()  { return bladeSwingStartupTicks; }
     public int  getSwingRecoverTicks()  { return bladeSwingRecoverTicks; }
@@ -195,15 +199,13 @@ public class GenjiData {
         dirty = true;
     }
 
-    public void startSwingRecover(boolean rightToLeft) {
+    public void startSwingRecovery(boolean rightToLeft) {
         double m = getNanoSlashSpeedMultiplier();
         int base = rightToLeft ? SWING_RL_RECOVER : SWING_LR_RECOVER;
-        int dur  = Math.max(1, (int)Math.round(base / m));
+        int dur  = Math.max(1, (int) Math.round(base / m));
         bladeSwingRecoverTicks = dur;
         dirty = true;
     }
-
-    public void startSwingRecovery(boolean rightToLeft) { startSwingRecover(rightToLeft); }
 
     // ====== DEFLECT ======
     public int  getDeflectTicks()    { return deflectTicks; }
@@ -240,8 +242,7 @@ public class GenjiData {
         dirty = true;
         return true;
     }
-    public void resetDashCooldown() { this.dashCooldown = 0; dirty = true; }
-    public void clearDashCooldown() { resetDashCooldown(); }
+    public void clearDashCooldown() { dashCooldown = 0; dirty = true; }
 
     // ====== PERSISTENCE ======
     public CompoundTag save() {

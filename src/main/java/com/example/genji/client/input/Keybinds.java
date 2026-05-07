@@ -16,10 +16,7 @@ public final class Keybinds {
     /** Dragonblade (Ultimate) */
     public static KeyMapping BLADE;
 
-    /** Legacy alias some code paths might still reference */
-    public static KeyMapping ULTIMATE;
-
-    /** Nano-Boost (new) */
+    /** Nano-Boost */
     public static KeyMapping NANO;
 
     /** Deflect */
@@ -30,12 +27,10 @@ public final class Keybinds {
 
     /** Invoked by ClientInit during the MOD bus RegisterKeyMappingsEvent */
     public static void register(RegisterKeyMappingsEvent e) {
-        BLADE    = new KeyMapping("key.genji.blade",   GLFW.GLFW_KEY_V,        CATEGORY);
-        ULTIMATE = BLADE; // keep alias working
-
-        NANO     = new KeyMapping("key.genji.nano",    GLFW.GLFW_KEY_B,        CATEGORY);
-        DEFLECT  = new KeyMapping("key.genji.deflect", GLFW.GLFW_KEY_Q,        CATEGORY);
-        DASH     = new KeyMapping("key.genji.dash",    GLFW.GLFW_KEY_LEFT_ALT, CATEGORY);
+        BLADE   = new KeyMapping("key.genji.blade",   GLFW.GLFW_KEY_V,        CATEGORY);
+        NANO    = new KeyMapping("key.genji.nano",    GLFW.GLFW_KEY_B,        CATEGORY);
+        DEFLECT = new KeyMapping("key.genji.deflect", GLFW.GLFW_KEY_Q,        CATEGORY);
+        DASH    = new KeyMapping("key.genji.dash",    GLFW.GLFW_KEY_LEFT_ALT, CATEGORY);
 
         e.register(BLADE);
         e.register(NANO);

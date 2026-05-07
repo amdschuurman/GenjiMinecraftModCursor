@@ -56,12 +56,6 @@ public final class GenjiConfig {
     public static final ForgeConfigSpec.IntValue    NANO_ABSORPTION_AMPLIFIER;
     public static final ForgeConfigSpec.IntValue    NANO_INSTANT_HEALTH_AMPLIFIER;
 
-    // ===== DEPRECATED TICK ALIASES (legacy reads) =====
-    public static final ForgeConfigSpec.IntValue DEFLECT_MAX_DURATION_TICKS;
-    public static final ForgeConfigSpec.IntValue DEFLECT_COOLDOWN_TICKS;
-    public static final ForgeConfigSpec.IntValue DASH_COOLDOWN_TICKS;
-    public static final ForgeConfigSpec.IntValue DRAGONBLADE_DURATION_TICKS;
-
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
 
@@ -127,14 +121,6 @@ public final class GenjiConfig {
         NANO_FIRE_RES_AMPLIFIER       = b.defineInRange("Effects.FireResistanceAmplifier", 0,  -1, 10);
         NANO_ABSORPTION_AMPLIFIER     = b.defineInRange("Effects.AbsorptionAmplifier",     4,  -1, 10);
         NANO_INSTANT_HEALTH_AMPLIFIER = b.defineInRange("Effects.InstantHealthAmplifier",  1,   0, 10);
-        b.pop();
-
-        // Deprecated tick aliases
-        b.push("DeprecatedTickAliases");
-        DEFLECT_MAX_DURATION_TICKS = b.defineInRange("DeflectMaxDurationTicks", 2 * 20, 0, 50_000);
-        DEFLECT_COOLDOWN_TICKS     = b.defineInRange("DeflectCooldownTicks",    8 * 20, 0, 50_000);
-        DASH_COOLDOWN_TICKS        = b.defineInRange("DashCooldownTicks",       8 * 20, 0, 50_000);
-        DRAGONBLADE_DURATION_TICKS = b.defineInRange("DragonbladeDurationTicks",6 * 20, 0, 50_000);
         b.pop();
 
         SPEC = b.build();
