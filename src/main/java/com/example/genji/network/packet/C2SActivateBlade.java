@@ -36,6 +36,13 @@ public class C2SActivateBlade {
 
                 // Remember client-selected slot if valid; else current
                 int sel = (selectedSlot >= 0 && selectedSlot < 9) ? selectedSlot : sp.getInventory().selected;
+
+                // Server-side validation: the slot we're about to overwrite
+                // must currently hold a shuriken. Without this check a forged
+                // C2SActivateBlade could silently destroy any other item.
+                ItemStack currentInSlot = sp.getInventory().getItem(sel);
+                if (!currentInSlot.is(ModItems.SHURIKEN.get())) return;
+
                 data.setBladeSlot(sel);
 
                 // Swap shuriken item to dragonblade item in the selected slot
