@@ -129,7 +129,7 @@ public class GenjiData {
     public void beginBladeCast() {
         bladeCastTicks = cfgBladeCastTicks();
         ult = 0;
-        cancelDeflect();
+        cancelDeflectStartCooldown();
         dirty = true;
     }
 
@@ -221,13 +221,18 @@ public class GenjiData {
         return true;
     }
 
+    /**
+     * Cancel an active deflect AND ensure the deflect cooldown is set. Used
+     * by all three cancel paths (manual Q, dash starting, blade-cast starting)
+     * for symmetric behavior. No-op if deflect was not active so non-deflecting
+     * players don't accidentally inherit a deflect cooldown.
+     */
     public void cancelDeflectStartCooldown() {
-        if (deflectTicks > 0) { deflectTicks = 0; dirty = true; }
-        if (deflectCooldown <= 0) { deflectCooldown = cfgDeflectCooldown(); dirty = true; }
-    }
-
-    public void cancelDeflect() {
-        if (deflectTicks > 0) { deflectTicks = 0; dirty = true; }
+        if (deflectTicks > 0) {
+            deflectTicks = 0;
+            if (deflectCooldown <= 0) deflectCooldown = cfgDeflectCooldown();
+            dirty = true;
+        }
     }
 
     // ====== DASH ======
