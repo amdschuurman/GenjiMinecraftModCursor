@@ -17,6 +17,16 @@ import java.util.UUID;
 public class DeflectEndCue {
     private static final Map<UUID, Integer> PREV = new HashMap<>();
 
+    /** Drop per-player previous-tick state on logout. Called from StateCleanup. */
+    public static void onPlayerLoggedOut(UUID id) {
+        PREV.remove(id);
+    }
+
+    /** Reset all state on server stop. */
+    public static void onServerStopped() {
+        PREV.clear();
+    }
+
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent e) {
         if (e.phase != TickEvent.Phase.END) return;

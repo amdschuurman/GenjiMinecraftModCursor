@@ -26,7 +26,19 @@ public class ArendDetection {
     
     // Track if Arend got his own achievement
     private static boolean AREND_GOT_HIS_ACHIEVEMENT = false;
-    
+
+    /**
+     * Reset on server stop so integrated-server reloads (open a new world after
+     * an old one) don't carry the Easter-egg flag forward. Per-player logout
+     * cleanup is intentionally NOT done — once a player has seen Arend they
+     * stay tagged until server stop, so the achievement isn't re-granted on
+     * every relog.
+     */
+    public static void onServerStopped() {
+        PLAYERS_WHO_SAW_AREND.clear();
+        AREND_GOT_HIS_ACHIEVEMENT = false;
+    }
+
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;

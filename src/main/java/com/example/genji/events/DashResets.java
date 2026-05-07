@@ -27,6 +27,23 @@ public final class DashResets {
     // 3 seconds at 20 tps
     private static final long ASSIST_WINDOW_TICKS = 60L;
 
+    /**
+     * Drop assist-tracking state for a leaving player. They're cleared as a
+     * victim (their inner attacker map is removed) AND as an attacker (their
+     * UUID is removed from every other victim's inner map) — without the
+     * latter, persistent entities that were hit but never died would leak the
+     * disconnecting attacker's UUID.
+     */
+    public static void onPlayerLoggedOut(UUID id) {
+        RECENT_HITS.remove(id);
+        RECENT_HITS.values().forEach(inner -> inner.remove(id));
+    }
+
+    /** Reset all global state on server stop. */
+    public static void onServerStopped() {
+        RECENT_HITS.clear();
+    }
+
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent e) {
         if (!(e.getSource().getEntity() instanceof ServerPlayer sp)) return;

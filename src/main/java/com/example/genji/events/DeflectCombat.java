@@ -37,6 +37,11 @@ public final class DeflectCombat {
 
     private static final Map<Integer, Long> RECENT = new HashMap<>();
 
+    /** Reset re-reflect-cooldown map on server stop. RECENT is keyed by entity id, not player UUID, so no per-player cleanup is needed. */
+    public static void onServerStopped() {
+        RECENT.clear();
+    }
+
     public static void perPlayerTick(ServerPlayer sp) {
         // Verdere safety (kan voorkomen op death/logout-frames)
         if (sp == null || sp.isRemoved() || !sp.isAlive()) return;

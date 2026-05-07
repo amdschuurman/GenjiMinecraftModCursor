@@ -61,6 +61,17 @@ public class ShurikenCombat {
         return STATES.computeIfAbsent(sp.getUUID(), id -> new State());
     }
 
+    /** Drop per-player runtime state when the player leaves. Called from StateCleanup. */
+    public static void onPlayerLoggedOut(UUID id) {
+        STATES.remove(id);
+    }
+
+    /** Reset all global state on server stop so integrated-server reloads start clean. */
+    public static void onServerStopped() {
+        STATES.clear();
+        tickCounter = 0;
+    }
+
     // === Inputs (called from your input packets) ===
     public static void setPrimaryHeld(ServerPlayer sp, boolean held)   { state(sp).primaryHeld = held; }
     public static void setSecondaryHeld(ServerPlayer sp, boolean held) { state(sp).secondaryHeld = held; }

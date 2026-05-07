@@ -49,6 +49,16 @@ public final class DashAbility {
         return ACTIVE.containsKey(sp.getUUID());
     }
 
+    /** Drop active dash state on logout. Called from StateCleanup. */
+    public static void onPlayerLoggedOut(UUID id) {
+        ACTIVE.remove(id);
+    }
+
+    /** Reset all global state on server stop. Called from StateCleanup. */
+    public static void onServerStopped() {
+        ACTIVE.clear();
+    }
+
     /** Called from packet to start a dash if cooldown allows. */
     public static void startDash(ServerPlayer sp, boolean bladeActive) {
         var data = GenjiDataProvider.getOrNull(sp);

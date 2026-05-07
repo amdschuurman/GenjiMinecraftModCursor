@@ -137,6 +137,22 @@ public final class DragonbladeCombat {
         }
     }
 
+    /** Drop per-player runtime state on logout. Called from StateCleanup. */
+    public static void onPlayerLoggedOut(UUID id) {
+        HELD_PRIMARY.remove(id);
+        HELD_SECONDARY.remove(id);
+        STARTUP_IN_PROGRESS.remove(id);
+        LAST_SWING_COMPLETION_TIME.remove(id);
+    }
+
+    /** Reset all global state on server stop. Called from StateCleanup. */
+    public static void onServerStopped() {
+        HELD_PRIMARY.clear();
+        HELD_SECONDARY.clear();
+        STARTUP_IN_PROGRESS.clear();
+        LAST_SWING_COMPLETION_TIME.clear();
+    }
+
     public static void setPrimaryHeld(ServerPlayer sp, boolean down) {
         if (down) {
             HELD_PRIMARY.add(sp.getUUID());
