@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
-/** Client trigger voor "deflect_hit{1..3}" FP anim. */
+/** Client trigger for the "deflect_hit{1..3}" FP animation variant. */
 public class S2CDeflectHit {
     private final int variant; // 1..3
 

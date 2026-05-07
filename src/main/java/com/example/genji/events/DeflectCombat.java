@@ -1,5 +1,6 @@
 package com.example.genji.events;
 
+import com.example.genji.capability.GenjiDataProvider;
 import com.example.genji.config.GenjiConfig;
 import com.example.genji.network.ModNetwork;
 import com.example.genji.network.packet.S2CDeflectHit;
@@ -17,20 +18,23 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkDirection;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Deflect:
- *  - Cone + LOS
- *  - Re-emit FROM camera center TOWARD crosshair
- *  - Min speeds uit config voor "stuck" projectiles
- *  - Ping SFX (volume uit config)
- *  - 1 hit-anim packet per tick als er iets gereflect is
- *  - SAFE: geen crash als capability (nog) niet aanwezig is
+ * Deflect mechanics: per-tick projectile reflection while a player is in their
+ * deflect window.
+ *
+ *   - Cone (forward dot-product gate) + LOS clip
+ *   - Re-emit from camera center toward the crosshair
+ *   - Per-projectile-class minimum speeds from config (catches "slow"
+ *     projectiles like snowballs by giving them a respectable return velocity)
+ *   - Ping SFX with config-driven volume
+ *   - One S2CDeflectHit anim packet per tick if anything was reflected
+ *   - SAFE: no crash if the GenjiData capability is missing
+ *     (death/respawn/login frames)
  */
 public final class DeflectCombat {
     private DeflectCombat() {}
@@ -43,11 +47,11 @@ public final class DeflectCombat {
     }
 
     public static void perPlayerTick(ServerPlayer sp) {
-        // Verdere safety (kan voorkomen op death/logout-frames)
+        // Death/logout-frame safety.
         if (sp == null || sp.isRemoved() || !sp.isAlive()) return;
 
-        // SAFETY: capability kan incidenteel ontbreken (spawn/death/login). Nooit hard throwen.
-        var data = safeGetData(sp);
+        // Capability can be missing on spawn/death/login frames; tolerate it.
+        var data = GenjiDataProvider.getOrNull(sp);
         if (data == null) return;
 
         if (data.getDeflectTicks() <= 0) return;
@@ -87,19 +91,15 @@ public final class DeflectCombat {
                 if (blockDist <= targetDist - 0.1) continue;
             }
 
-            // Snelheden
+            // Skip stationary projectiles (arrows/shurikens stuck in a block,
+            // or anything else that's not actively flying).
             double current = proj.getDeltaMovement().length();
-            
-            // Skip stationary projectiles (stuck in ground/walls or otherwise not moving)
-            // This catches arrows/shurikens stuck in blocks, as well as any other stationary projectiles
-            if (current < 0.01) {
-                continue; // Projectile is essentially stationary, don't deflect
-            }
-            
+            if (current < 0.01) continue;
+
             double min = minSpeed(proj);
             float  speed = (float) Math.max(current, min);
 
-            // Re-emit van camera center naar crosshair
+            // Re-emit from camera origin toward the crosshair
             Vec3 origin = eye.add(look.scale(0.2));
             proj.setPos(origin.x, origin.y, origin.z);
             proj.shoot(look.x, look.y, look.z, speed, 0.0F);
@@ -115,7 +115,6 @@ public final class DeflectCombat {
             proj.hasImpulse = true;
             proj.hurtMarked = true;
 
-            // Ping
             float vol   = GenjiConfig.DEFLECT_PING_VOLUME.get().floatValue();
             float pitch = 0.95f + sp.getRandom().nextFloat() * 0.1f;
             level.playSound(null, origin.x, origin.y, origin.z,
@@ -132,11 +131,6 @@ public final class DeflectCombat {
             int variant = 1 + sp.getRandom().nextInt(3);
             ModNetwork.sendToPlayer(sp, new S2CDeflectHit(variant));
         }
-    }
-
-    /** Read GenjiData without throwing; returns null if not (yet) attached. */
-    private static com.example.genji.capability.GenjiData safeGetData(ServerPlayer sp) {
-        return com.example.genji.capability.GenjiDataProvider.getOrNull(sp);
     }
 
     private static double minSpeed(Projectile p) {

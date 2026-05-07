@@ -121,12 +121,10 @@ public class ShurikenEntity extends ThrowableItemProjectile implements GeoEntity
             return;
         }
 
-        // Spawn green particle trail while in flight (every tick, but particles dissipate quickly)
-        if (level().isClientSide && flightTicks % 1 == 0) {
-            // Get current position
+        // Spawn green particle trail while in flight. Composter particles
+        // dissipate fast so a per-tick spawn keeps the trail visually solid.
+        if (level().isClientSide) {
             Vec3 pos = position();
-            
-            // Composter particles (green) - dissipate very quickly
             level().addParticle(net.minecraft.core.particles.ParticleTypes.COMPOSTER,
                     pos.x, pos.y, pos.z,
                     0, 0, 0);

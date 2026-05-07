@@ -43,15 +43,16 @@ public class ShurikenCombat {
 
     // ===== Runtime state =====
     private static final Map<UUID, State> STATES = new HashMap<>();
-    private static int tickCounter = 0;
+    /** Long to avoid overflow on long-running servers (~292 billion years instead of ~3.4 years). */
+    private static long tickCounter = 0;
 
     private static class State {
         boolean primaryHeld = false;
         boolean secondaryHeld = false;
 
-        int sharedCd = 0;         // global cooldown gating starts
-        int burstShotsLeft = 0;   // shots remaining in current M1 burst
-        int nextBurstTick = 0;    // when to fire the next burst shot
+        long sharedCd = 0;         // global cooldown gating starts
+        int  burstShotsLeft = 0;   // shots remaining in current M1 burst
+        long nextBurstTick = 0;    // when to fire the next burst shot
 
         // For precise 0.68s M2 recovery (13.6 ticks): 14,14,14,13,13 repeat
         int secondaryCycle = 0;

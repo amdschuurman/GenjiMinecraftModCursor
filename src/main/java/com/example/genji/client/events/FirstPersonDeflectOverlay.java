@@ -22,7 +22,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
-/** Tekent hand + wakizashi tijdens deflect-anim venster. */
+/** Renders hand + wakizashi during the deflect animation window. */
 @Mod.EventBusSubscriber(modid = GenjiMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FirstPersonDeflectOverlay {
 

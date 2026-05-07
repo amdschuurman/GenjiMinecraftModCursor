@@ -3,7 +3,7 @@ package com.example.genji.client.anim;
 import net.minecraft.client.Minecraft;
 
 /**
- * Client-only timing/state voor deflect animaties:
+ * Client-only timing/state for deflect animations:
  * start -> idle (loop) -> (hit1..3 one-shots) -> end one-shot.
  */
 public final class FPDeflectAnim {
@@ -23,7 +23,7 @@ public final class FPDeflectAnim {
     public static void start() {
         active = true;
         startTick = ticks();
-        endUntil = Long.MIN_VALUE; // cancel end visual als we weer starten
+        endUntil = Long.MIN_VALUE; // cancel end visual if we restart
     }
 
     public static void end() {
@@ -52,7 +52,7 @@ public final class FPDeflectAnim {
         return Mode.NONE;
     }
 
-    // Edge helpers voor force-reset in controllers
+    // Edge helpers for force-reset in controllers
     public static boolean justStarted() { return active && startTick != Long.MIN_VALUE && ticks() == startTick; }
     public static boolean justHit()     { long now = ticks(); return hitUntil != Long.MIN_VALUE && now == (hitUntil - HIT_TICKS); }
     public static boolean justEnded()   { long now = ticks(); return !active && endUntil != Long.MIN_VALUE && now == (endUntil - END_TICKS); }

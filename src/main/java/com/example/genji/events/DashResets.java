@@ -10,10 +10,10 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Resets dash cooldown on kills and assists (assist window ~3s).
@@ -22,8 +22,10 @@ import java.util.UUID;
 public final class DashResets {
     private DashResets() {}
 
-    // victim -> (attacker -> lastHitGameTime)
-    private static final Map<UUID, Map<UUID, Long>> RECENT_HITS = new HashMap<>();
+    // victim -> (attacker -> lastHitGameTime). ConcurrentHashMap because Forge can
+    // dispatch LivingHurtEvent / LivingDeathEvent from worker threads in some
+    // versions; matches the concurrent-safe collections in DragonbladeCombat.
+    private static final Map<UUID, Map<UUID, Long>> RECENT_HITS = new ConcurrentHashMap<>();
     // 3 seconds at 20 tps
     private static final long ASSIST_WINDOW_TICKS = 60L;
 
@@ -53,7 +55,7 @@ public final class DashResets {
         UUID victim = e.getEntity().getUUID();
         UUID attacker = sp.getUUID();
 
-        RECENT_HITS.computeIfAbsent(victim, k -> new HashMap<>()).put(attacker, now);
+        RECENT_HITS.computeIfAbsent(victim, k -> new ConcurrentHashMap<>()).put(attacker, now);
 
         // Clean old entries for this victim
         Map<UUID, Long> map = RECENT_HITS.get(victim);
