@@ -45,15 +45,12 @@ public class C2SActivateBlade {
 
                 data.setBladeSlot(sel);
 
-                // Swap shuriken item to dragonblade item in the selected slot
+                // Swap shuriken item to dragonblade item in the selected slot.
+                // Damage boost during nano is applied via the unified
+                // NANO_DAMAGE_MULTIPLIER (DragonbladeCombat reads it); no
+                // enchantments are added so the same 1.5x applies cleanly.
                 ItemStack dragonbladeStack = new ItemStack(ModItems.DRAGONBLADE.get());
-                
-                // Apply nanoboost enchantments if active
                 boolean nanoWasActive = data.isNanoActive();
-                if (nanoWasActive) {
-                    DragonbladeItem.applyNanoboostEnchantments(dragonbladeStack, true);
-                }
-                
                 sp.getInventory().setItem(sel, dragonbladeStack);
                 sp.inventoryMenu.broadcastChanges();
 

@@ -35,18 +35,10 @@ public class C2SActivateNanoBoost {
                 // Grant first nanoboost advancement
                 AdvancementHelper.grantAdvancement(sp, ResourceLocation.fromNamespaceAndPath("genji", "first_nanoboost"));
                 
-                // Update dragonblade enchantments if blade is active
+                // Grant combo achievement if both nano and blade are active.
+                // Damage boost is handled via the unified NANO_DAMAGE_MULTIPLIER
+                // path in DragonbladeCombat — no item enchantments are added.
                 if (data.isBladeActive()) {
-                    int bladeSlot = data.getBladeSlot();
-                    if (bladeSlot >= 0 && bladeSlot < 9) {
-                        ItemStack bladeStack = sp.getInventory().getItem(bladeSlot);
-                        if (bladeStack.is(ModItems.DRAGONBLADE.get())) {
-                            DragonbladeItem.applyNanoboostEnchantments(bladeStack, true);
-                            sp.inventoryMenu.broadcastChanges();
-                        }
-                    }
-                    
-                    // Grant combo achievement if both nano and blade are active
                     AdvancementHelper.grantAdvancement(sp, ResourceLocation.fromNamespaceAndPath("genji", "nano_blade_combo"));
                 }
                 

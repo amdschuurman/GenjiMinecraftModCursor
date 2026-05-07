@@ -43,18 +43,6 @@ public class CommonEvents {
             // advance all timers once per tick
             data.tick();
             
-            // === Handle nanoboost ending (remove dragonblade enchantments)
-            if (prevNano && !data.isNanoActive() && data.isBladeActive() && p instanceof ServerPlayer sp) {
-                int bladeSlot = data.getBladeSlot();
-                if (bladeSlot >= 0 && bladeSlot < 9) {
-                    ItemStack bladeStack = sp.getInventory().getItem(bladeSlot);
-                    if (bladeStack.is(ModItems.DRAGONBLADE.get())) {
-                        DragonbladeItem.applyNanoboostEnchantments(bladeStack, false);
-                        sp.inventoryMenu.broadcastChanges();
-                    }
-                }
-            }
-
             // === Nano-Boost: apply buffs while active (server-side)
             if (!p.level().isClientSide && data.isNanoActive() && p instanceof ServerPlayer sp) {
                 int dur = 4; // reapply briefly each tick so effects persist

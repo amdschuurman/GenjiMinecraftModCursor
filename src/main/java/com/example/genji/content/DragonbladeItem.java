@@ -91,38 +91,6 @@ public class DragonbladeItem extends SwordItem implements GeoItem {
     }
     
 
-    /**
-     * Apply nanoboost enchantments to the dragonblade item.
-     * Adds Sharpness III and Looting III when nanoboost is active.
-     */
-    public static void applyNanoboostEnchantments(ItemStack stack, boolean nanoboostActive) {
-        if (nanoboostActive) {
-            // Add Sharpness III for +50% damage boost (1.5x damage)
-            stack.enchant(Enchantments.SHARPNESS, 3);
-            // Add Looting III for better drops
-            stack.enchant(Enchantments.MOB_LOOTING, 3);
-        } else {
-            // Remove nanoboost enchantments by creating a new stack without them
-            ItemStack newStack = new ItemStack(stack.getItem());
-            if (stack.hasTag() && stack.getTag() != null) {
-                newStack.setTag(stack.getTag().copy());
-            }
-            // Copy all enchantments except the ones we want to remove
-            var enchantments = stack.getEnchantmentTags();
-            for (int i = 0; i < enchantments.size(); i++) {
-                var enchantmentTag = enchantments.getCompound(i);
-                var enchantment = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValue(
-                    net.minecraft.resources.ResourceLocation.parse(enchantmentTag.getString("id"))
-                );
-                if (enchantment != Enchantments.SHARPNESS && enchantment != Enchantments.MOB_LOOTING) {
-                    newStack.enchant(enchantment, enchantmentTag.getInt("lvl"));
-                }
-            }
-            // Copy the new stack back
-            stack.setTag(newStack.getTag());
-        }
-    }
-
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar ctrls) {
         ctrls.add(new AnimationController<>(this, "hand_ctrl", TRANSITION_TICKS, state -> {
