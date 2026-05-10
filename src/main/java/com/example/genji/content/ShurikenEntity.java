@@ -187,6 +187,17 @@ public class ShurikenEntity extends ThrowableItemProjectile implements GeoEntity
             // is dispatched from CommonEvents.onEntityHurt).
             playSound(net.minecraft.sounds.SoundEvents.TRIDENT_HIT, 0.5f, 1.2f);
 
+            // Crit-particle burst on headshots — visual confirm everyone nearby
+            // can see, separate from the owner-only headshot audio.
+            if (isHeadshot && level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                Vec3 hitLoc = hit.getLocation();
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT,
+                        hitLoc.x, hitLoc.y, hitLoc.z,
+                        12,            // count
+                        0.15, 0.15, 0.15,  // spread
+                        0.18);         // speed
+            }
+
             discard();
         }
     }

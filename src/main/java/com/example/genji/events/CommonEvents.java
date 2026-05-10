@@ -63,6 +63,7 @@ public final class CommonEvents {
 
             if (p instanceof ServerPlayer sp) {
                 applyNanoAndSpeedEffects(sp, data);
+                playUltReadyCueIfDue(sp, data);
             }
             handleCastToActiveTransition(p, data, prevCast);
             playEndingCueIfDue(p, data);
@@ -118,6 +119,18 @@ public final class CommonEvents {
             int speedAmp = (nanoActive && bladeActive) ? 3 : 1;
             sp.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, dur, speedAmp, false, false, true));
         }
+    }
+
+    /**
+     * Personal ult-ready cue. Plays a player-only chime exactly on the tick the
+     * ult meter crosses 99→100 (edge tracked inside {@link GenjiData}). Uses
+     * {@link ServerPlayer#playNotifySound} so only the owner hears it — this is
+     * personal feedback, not a "Genji ulted, run!" warning.
+     */
+    private static void playUltReadyCueIfDue(ServerPlayer sp, GenjiData data) {
+        if (!data.consumeUltJustReady()) return;
+        sp.playNotifySound(net.minecraft.sounds.SoundEvents.UI_TOAST_CHALLENGE_COMPLETE,
+                net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
     }
 
     /**
