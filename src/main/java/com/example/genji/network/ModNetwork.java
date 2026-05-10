@@ -6,7 +6,9 @@ import com.example.genji.network.packet.C2SActivateBlade;
 import com.example.genji.network.packet.C2SActivateDash;
 import com.example.genji.network.packet.C2SActivateDeflect;
 import com.example.genji.network.packet.C2SActivateNanoBoost;
+import com.example.genji.network.packet.C2SDoubleJump;
 import com.example.genji.network.packet.C2SSetPrimaryHeld;
+import com.example.genji.network.packet.C2SSetWallClimb;
 import com.example.genji.network.packet.C2SSetSecondaryHeld;
 import com.example.genji.network.packet.S2CSyncGenjiData;
 import com.example.genji.network.packet.S2CShurikenFPAnim;
@@ -19,7 +21,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ModNetwork {
-    public static final String PROTO = "2";
+    public static final String PROTO = "3";
     public static SimpleChannel CHANNEL;
     private static int id = 0;
 
@@ -55,6 +57,14 @@ public class ModNetwork {
         CHANNEL.messageBuilder(C2SSetSecondaryHeld.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .decoder(C2SSetSecondaryHeld::new).encoder(C2SSetSecondaryHeld::toBytes)
                 .consumerMainThread(C2SSetSecondaryHeld::handle).add();
+
+        CHANNEL.messageBuilder(C2SDoubleJump.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(C2SDoubleJump::new).encoder(C2SDoubleJump::toBytes)
+                .consumerMainThread(C2SDoubleJump::handle).add();
+
+        CHANNEL.messageBuilder(C2SSetWallClimb.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .decoder(C2SSetWallClimb::new).encoder(C2SSetWallClimb::toBytes)
+                .consumerMainThread(C2SSetWallClimb::handle).add();
 
         // ---------------- S2C ----------------
         CHANNEL.messageBuilder(S2CSyncGenjiData.class, id++, NetworkDirection.PLAY_TO_CLIENT)

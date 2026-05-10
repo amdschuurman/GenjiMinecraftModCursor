@@ -7,8 +7,10 @@ import com.example.genji.network.ModNetwork;
 import com.example.genji.network.packet.C2SActivateBlade;
 import com.example.genji.network.packet.C2SActivateDash;
 import com.example.genji.network.packet.C2SActivateDeflect;
+import com.example.genji.network.packet.C2SDoubleJump;
 import com.example.genji.network.packet.C2SSetPrimaryHeld;
 import com.example.genji.network.packet.C2SSetSecondaryHeld;
+import com.example.genji.network.packet.C2SSetWallClimb;
 import com.example.genji.registry.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +34,10 @@ public final class ClientEvents {
     private static boolean primaryHeldSent = false;
     private static boolean secondaryHeldSent = false;
     private static boolean hadScreenLastTick = false;
+
+    // Passive-movement input state (double-jump edge + wall-climb level).
+    private static boolean jumpHeldLastTick = false;
+    private static boolean wallClimbingSent = false;
 
     private static boolean holdingShuriken(ItemStack stack) {
         return stack != null && stack.is(ModItems.SHURIKEN.get());
@@ -145,8 +151,46 @@ public final class ClientEvents {
                 ModNetwork.CHANNEL.sendToServer(new C2SSetSecondaryHeld(false));
                 secondaryHeldSent = false;
             }
+            if (wallClimbingSent) {
+                ModNetwork.CHANNEL.sendToServer(new C2SSetWallClimb(false));
+                wallClimbingSent = false;
+            }
         }
+
+        if (holdingGenji) {
+            handlePassiveMovementInput(mc);
+        } else {
+            jumpHeldLastTick = false;
+        }
+
         hadScreenLastTick = hasScreen;
+    }
+
+    /**
+     * Detect the passive-movement input edges:
+     *   - Double-jump: jump key just pressed AND player is mid-air → C2SDoubleJump
+     *   - Wall-climb: jump key held AND wall in front AND mid-air → C2SSetWallClimb(true/false on edge)
+     *
+     * Hand-swap-mid-press is implicitly handled by the {@code holdingGenji} gate above —
+     * if the player swaps off, the wall-climb release packet fires from the
+     * {@code shouldRelease} branch on next tick.
+     */
+    private static void handlePassiveMovementInput(Minecraft mc) {
+        boolean jumpHeldNow = mc.options.keyJump.isDown();
+        boolean midAir = !mc.player.onGround() && !mc.player.isInWater() && !mc.player.isPassenger();
+
+        // Double-jump on the rising edge of the jump key while mid-air.
+        if (jumpHeldNow && !jumpHeldLastTick && midAir) {
+            ModNetwork.CHANNEL.sendToServer(new C2SDoubleJump());
+        }
+        jumpHeldLastTick = jumpHeldNow;
+
+        // Wall-climb is a level signal: jump held + horizontal collision + mid-air.
+        boolean wallClimbingNow = jumpHeldNow && midAir && mc.player.horizontalCollision;
+        if (wallClimbingNow != wallClimbingSent) {
+            ModNetwork.CHANNEL.sendToServer(new C2SSetWallClimb(wallClimbingNow));
+            wallClimbingSent = wallClimbingNow;
+        }
     }
 
     /** Hide hand while LMB is held with genji items (no vanilla swing anim), but never during GUIs. */

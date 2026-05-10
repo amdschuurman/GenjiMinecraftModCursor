@@ -40,6 +40,19 @@ public class GenjiData {
     private int nanoBoostTicks = 0;
     private boolean nanoJustActivated = false;
 
+    // ====== PASSIVE MOVEMENT ======
+    /** True after a mid-air double-jump until the player touches ground again. */
+    private boolean doubleJumpUsed = false;
+    /** True while the player is actively wall-climbing. Set by C2SSetWallClimb from the client. */
+    private boolean wallClimbing = false;
+    /** Remaining ticks of wall-climb budget. Refilled to {@link #WALL_CLIMB_MAX_BUDGET_TICKS} on ground touch. */
+    private int wallClimbBudgetTicks = WALL_CLIMB_MAX_BUDGET_TICKS;
+    /** ~3 s of climb @ 20 TPS — matches OW Genji's wall-climb feel. */
+    public static final int WALL_CLIMB_MAX_BUDGET_TICKS = 60;
+
+    /** Set when ult crosses 99→100 in {@link #addUltFromDamage}; cleared by the consumer that plays the cue. */
+    private boolean ultJustReady = false;
+
     private boolean dirty = true;
 
     // ====== CONFIG HELPERS (SECONDS -> TICKS) ======
@@ -82,10 +95,22 @@ public class GenjiData {
     public void setNano(int v) { nano = clamp01(v); dirty = true; }
 
     public void addUltFromDamage(float damage) {
+        int prev = ult;
         double full = GenjiConfig.ULT_DAMAGE_FOR_FULL_CHARGE.get();
         if (full <= 0.0) full = 50.0;
-        int add = (int)Math.ceil((damage / full) * 100.0);
+        int add = (int) Math.ceil((damage / full) * 100.0);
         setUlt(Math.min(100, ult + add));
+        if (prev < 100 && ult >= 100) ultJustReady = true;
+    }
+
+    /**
+     * Read-and-clear the "ult just hit 100" edge flag. Called from {@code CommonEvents}
+     * to play the ult-ready cue exactly once on the transition tick.
+     */
+    public boolean consumeUltJustReady() {
+        if (!ultJustReady) return false;
+        ultJustReady = false;
+        return true;
     }
 
     public void addNanoFromDamage(float damage) {
@@ -244,6 +269,18 @@ public class GenjiData {
     }
     public void clearDashCooldown() { dashCooldown = 0; dirty = true; }
 
+    // ====== PASSIVE MOVEMENT (DOUBLE JUMP + WALL CLIMB) ======
+    public boolean isDoubleJumpUsed() { return doubleJumpUsed; }
+    public void useDoubleJump()       { doubleJumpUsed = true; dirty = true; }
+    public void resetDoubleJump()     { doubleJumpUsed = false; dirty = true; }
+
+    public boolean isWallClimbing()           { return wallClimbing; }
+    public void setWallClimbing(boolean v)    { wallClimbing = v; dirty = true; }
+
+    public int  getWallClimbBudgetTicks()         { return wallClimbBudgetTicks; }
+    public void consumeWallClimbBudget(int ticks) { wallClimbBudgetTicks = Math.max(0, wallClimbBudgetTicks - ticks); dirty = true; }
+    public void refillWallClimbBudget()           { wallClimbBudgetTicks = WALL_CLIMB_MAX_BUDGET_TICKS; dirty = true; }
+
     // ====== PERSISTENCE ======
     public CompoundTag save() {
         CompoundTag t = new CompoundTag();
@@ -266,6 +303,10 @@ public class GenjiData {
 
         t.putInt("nanoBoost", nanoBoostTicks);
         t.putBoolean("nanoJust", nanoJustActivated);
+
+        t.putBoolean("doubleJumpUsed", doubleJumpUsed);
+        t.putInt("wallClimbBudget", wallClimbBudgetTicks);
+        // wallClimbing is a runtime input flag — never persist
 
         return t;
     }
@@ -290,6 +331,10 @@ public class GenjiData {
 
         nanoBoostTicks = t.getInt("nanoBoost");
         nanoJustActivated = t.contains("nanoJust") && t.getBoolean("nanoJust");
+
+        doubleJumpUsed = t.contains("doubleJumpUsed") && t.getBoolean("doubleJumpUsed");
+        wallClimbBudgetTicks = t.contains("wallClimbBudget") ? t.getInt("wallClimbBudget") : WALL_CLIMB_MAX_BUDGET_TICKS;
+        // wallClimbing is intentionally not persisted
 
         dirty = true;
     }
