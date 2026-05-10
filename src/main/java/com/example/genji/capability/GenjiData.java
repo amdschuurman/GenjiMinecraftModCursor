@@ -138,6 +138,15 @@ public class GenjiData {
         dirty = true;
     }
 
+    /** End nano-boost immediately. Used on death so buffs don't carry across respawn. */
+    public void cancelNanoBoost() {
+        if (nanoBoostTicks > 0) {
+            nanoBoostTicks = 0;
+            dirty = true;
+        }
+        nanoJustActivated = false;
+    }
+
     public double getNanoDamageMultiplier()       { return isNanoActive() ? Math.max(1.0, GenjiConfig.NANO_DAMAGE_MULTIPLIER.get()) : 1.0; }
     public double getNanoSlashSpeedMultiplier()   { return isNanoActive() ? Math.max(1.0, GenjiConfig.NANO_SLASH_SPEED_MULTIPLIER.get()) : 1.0; }
 

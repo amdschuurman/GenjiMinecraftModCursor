@@ -49,11 +49,14 @@ public final class DragonbladeIntegrityHandler {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
         GenjiData data = GenjiDataProvider.getOrNull(sp);
         if (data == null) return;
-        // Death always ends the ult regardless of phase. Capability is then
-        // copied to the respawned player via PlayerEvent.Clone with a clean
-        // blade state.
+        // Death cancels all active ability state — OW canon, you respawn
+        // fresh. Charge meters (ult/nano) and cooldowns (dash/deflect) DO
+        // carry across since they live in the cap NBT and OW's respawn timer
+        // serves the same role of letting them tick down.
         data.cancelBlade();
         data.clearBladeSlot();
+        data.cancelDeflectStartCooldown();  // also cancels active deflect, keeps cooldown set
+        data.cancelNanoBoost();             // strip nano buffs on death
     }
 
     @SubscribeEvent
