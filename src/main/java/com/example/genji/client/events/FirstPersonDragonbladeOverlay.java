@@ -31,10 +31,11 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 @Mod.EventBusSubscriber(modid = GenjiMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FirstPersonDragonbladeOverlay {
 
-    private static final double SHIFT_X = 0.17D;   // + right,  - left (optimized)
-    private static final double SHIFT_Y = -1.00D;  // + up,     - down (optimized)
-    private static final double SHIFT_Z = -1.25D;  // + away,   - toward camera (optimized)
-    private static final float  SCALE   = 1.00f;
+    // Hand-grip pose — see FPOverlayConstants
+    private static final double SHIFT_X = com.example.genji.client.render.FPOverlayConstants.HAND_GRIP_SHIFT_X;
+    private static final double SHIFT_Y = com.example.genji.client.render.FPOverlayConstants.HAND_GRIP_SHIFT_Y;
+    private static final double SHIFT_Z = com.example.genji.client.render.FPOverlayConstants.HAND_GRIP_SHIFT_Z;
+    private static final float  SCALE   = com.example.genji.client.render.FPOverlayConstants.HAND_GRIP_SCALE;
 
     // Lazily created on first render (AFTER registries are ready).
     // Never call ModItems.DRAGONBLADE.get() in static init!

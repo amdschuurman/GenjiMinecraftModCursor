@@ -33,11 +33,11 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 @Mod.EventBusSubscriber(modid = GenjiMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FirstPersonShurikenOverlay {
 
-    // Positioning constants (optimized values from debug testing)
-    private static final float SHIFT_X = 0.17f;
-    private static final float SHIFT_Y = -1.00f;
-    private static final float SHIFT_Z = -1.25f;
-    private static final float SCALE = 1.0f;
+    // Hand-grip pose — see FPOverlayConstants
+    private static final float SHIFT_X = (float) com.example.genji.client.render.FPOverlayConstants.HAND_GRIP_SHIFT_X;
+    private static final float SHIFT_Y = (float) com.example.genji.client.render.FPOverlayConstants.HAND_GRIP_SHIFT_Y;
+    private static final float SHIFT_Z = (float) com.example.genji.client.render.FPOverlayConstants.HAND_GRIP_SHIFT_Z;
+    private static final float SCALE   = com.example.genji.client.render.FPOverlayConstants.HAND_GRIP_SCALE;
 
     // Lazy-initialized persistent stack for GeckoLib animation continuity
     private static ItemStack FP_SHURIKEN_STACK = null;

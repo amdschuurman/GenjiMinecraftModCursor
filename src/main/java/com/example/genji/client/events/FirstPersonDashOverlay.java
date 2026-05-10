@@ -32,11 +32,11 @@ public final class FirstPersonDashOverlay {
 
     private FirstPersonDashOverlay() {}
 
-    // Your validated FP placement
-    private static final double SHIFT_X = 0.12D;
-    private static final double SHIFT_Y = -0.90D;
-    private static final double SHIFT_Z = -1.40D;
-    private static final float  SCALE   = 1.00f;
+    // Wakizashi pose — see FPOverlayConstants
+    private static final double SHIFT_X = com.example.genji.client.render.FPOverlayConstants.WAKIZASHI_SHIFT_X;
+    private static final double SHIFT_Y = com.example.genji.client.render.FPOverlayConstants.WAKIZASHI_SHIFT_Y;
+    private static final double SHIFT_Z = com.example.genji.client.render.FPOverlayConstants.WAKIZASHI_SHIFT_Z;
+    private static final float  SCALE   = com.example.genji.client.render.FPOverlayConstants.WAKIZASHI_SCALE;
 
     private static ItemStack DASH_STACK; // persistent stack so GeckoLib controllers persist
 
