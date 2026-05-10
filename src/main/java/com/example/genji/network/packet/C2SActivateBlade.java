@@ -66,7 +66,7 @@ public class C2SActivateBlade {
                 }
 
                 // Play the ult VO / start sound
-                sp.level().playSound(null, sp, ModSounds.DRAGONBLADE_START.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+                sp.level().playSound(null, sp, ModSounds.DRAGONBLADE_START.get(), SoundSource.PLAYERS, 1.3f, 1.0f);
 
                 // Stop shuriken channels immediately
                 ShurikenCombat.setPrimaryHeld(sp, false);

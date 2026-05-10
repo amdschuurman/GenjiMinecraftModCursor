@@ -188,6 +188,17 @@ public final class DragonbladeCombat {
 
         float pitch = 0.9f + sp.getRandom().nextFloat() * 0.2f;
         sp.serverLevel().playSound(null, sp, ModSounds.DRAGONBLADE_SLICE.get(), SoundSource.PLAYERS, 1.0f, pitch);
+
+        // Slash trail: a SWEEP_ATTACK arc ~1.5 blocks in front of the eye, biased
+        // slightly upward so the visual reads as a horizontal slash, not a footprint.
+        Vec3 eye = sp.getEyePosition();
+        Vec3 forward = sp.getLookAngle();
+        Vec3 trail = eye.add(forward.scale(1.5));
+        sp.serverLevel().sendParticles(
+                net.minecraft.core.particles.ParticleTypes.SWEEP_ATTACK,
+                trail.x, trail.y, trail.z,
+                1, 0.0, 0.0, 0.0, 0.0
+        );
     }
 
     private static void clearPerPlayerState(UUID id) {

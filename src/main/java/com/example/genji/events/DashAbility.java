@@ -113,7 +113,7 @@ public final class DashAbility {
         ModNetwork.sendToPlayer(sp, new S2CStartDash(startPos, end, scaledDuration));
 
         // Audio & prep
-        level.playSound(null, sp, ModSounds.DASH.get(), SoundSource.PLAYERS, 2.0f, 1.0f);
+        level.playSound(null, sp, ModSounds.DASH.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         sp.setDeltaMovement(Vec3.ZERO);
         sp.hurtMarked = true;
         sp.fallDistance = 0;

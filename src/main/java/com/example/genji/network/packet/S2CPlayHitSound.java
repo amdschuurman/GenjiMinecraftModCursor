@@ -36,10 +36,10 @@ public class S2CPlayHitSound {
             var player = Minecraft.getInstance().player;
             if (player == null) return;
             switch (soundType) {
-                case "shuriken"      -> player.playSound(ModSounds.SHURIKEN_HIT.get(),      2.0f, 1.0f);
-                case "shuriken_nano" -> player.playSound(ModSounds.SHURIKEN_HIT_NANO.get(), 2.0f, 1.0f);
-                case "kill"          -> player.playSound(ModSounds.KILL_SOUND.get(),        2.0f, 1.0f);
-                case "headshot"      -> player.playSound(ModSounds.HEADSHOT_HIT.get(),      2.0f, 1.0f);
+                case "shuriken"      -> player.playSound(ModSounds.SHURIKEN_HIT.get(),      1.0f, 1.0f);
+                case "shuriken_nano" -> player.playSound(ModSounds.SHURIKEN_HIT_NANO.get(), 1.2f, 1.0f);
+                case "kill"          -> player.playSound(ModSounds.KILL_SOUND.get(),        1.5f, 1.0f);
+                case "headshot"      -> player.playSound(ModSounds.HEADSHOT_HIT.get(),      1.5f, 1.0f);
             }
         });
         c.setPacketHandled(true);

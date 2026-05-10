@@ -144,7 +144,7 @@ public class ShurikenCombat {
                 sp.blockPosition(),
                 ModSounds.SHURIKEN_ATTACK1.get(),    // randomized by sounds.json
                 SoundSource.PLAYERS,
-                3.5f,
+                1.4f,
                 1.0f
         );
     }
@@ -165,7 +165,7 @@ public class ShurikenCombat {
                 sp.blockPosition(),
                 ModSounds.SHURIKEN_ATTACK2.get(),
                 SoundSource.PLAYERS,
-                3.5f,
+                1.4f,
                 1.0f
         );
     }

@@ -43,7 +43,7 @@ public class C2SActivateNanoBoost {
                 }
                 
                 // Play nanoboost casting sound
-                sp.level().playSound(null, sp, ModSounds.NANOBOOST_CAST.get(), SoundSource.PLAYERS, 2.0f, 1.0f);
+                sp.level().playSound(null, sp, ModSounds.NANOBOOST_CAST.get(), SoundSource.PLAYERS, 1.3f, 1.0f);
                 
                 // No explicit sync call needed if you already sync in your player tick;
                 // otherwise your existing S2C sync path will propagate nano meter=0 and runtime.
