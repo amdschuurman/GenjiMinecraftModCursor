@@ -40,8 +40,9 @@ public final class DoubleJumpAbility {
     public static void executeDoubleJump(ServerPlayer sp) {
         GenjiData data = GenjiDataProvider.getOrNull(sp);
         if (data == null) return;
-        // Must be airborne and not riding something to use it.
-        if (sp.onGround() || sp.isInWater() || sp.isPassenger()) return;
+        // Must be airborne, not riding, not sleeping, not creative-flying.
+        if (sp.onGround() || sp.isInWater() || sp.isPassenger() || sp.isSleeping()) return;
+        if (sp.getAbilities().flying) return; // creative / spectator flight handles its own movement
         if (data.isDoubleJumpUsed()) return;
 
         Vec3 v = sp.getDeltaMovement();

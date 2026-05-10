@@ -47,8 +47,12 @@ public class GenjiData {
     private boolean wallClimbing = false;
     /** Remaining ticks of wall-climb budget. Refilled to {@link #WALL_CLIMB_MAX_BUDGET_TICKS} on ground touch. */
     private int wallClimbBudgetTicks = WALL_CLIMB_MAX_BUDGET_TICKS;
-    /** ~3 s of climb @ 20 TPS — matches OW Genji's wall-climb feel. */
-    public static final int WALL_CLIMB_MAX_BUDGET_TICKS = 60;
+    /**
+     * Max wall-climb time, in ticks. Net upward velocity is ~0.14 b/t (climb
+     * 0.22 - gravity 0.08), so 30 ticks = ~4 blocks of climb — matches OW
+     * Genji's wall-climb height per cooldown.
+     */
+    public static final int WALL_CLIMB_MAX_BUDGET_TICKS = 30;
 
     /** Set when ult crosses 99→100 in {@link #addUltFromDamage}; cleared by the consumer that plays the cue. */
     private boolean ultJustReady = false;
@@ -95,6 +99,7 @@ public class GenjiData {
     public void setNano(int v) { nano = clamp01(v); dirty = true; }
 
     public void addUltFromDamage(float damage) {
+        if (damage <= 0f) return; // never accept negative or zero contributions
         int prev = ult;
         double full = GenjiConfig.ULT_DAMAGE_FOR_FULL_CHARGE.get();
         if (full <= 0.0) full = 50.0;
@@ -114,6 +119,7 @@ public class GenjiData {
     }
 
     public void addNanoFromDamage(float damage) {
+        if (damage <= 0f) return;
         double full = GenjiConfig.NANO_DAMAGE_FOR_FULL_CHARGE.get();
         if (full <= 0.0) full = 120.0;
         int add = (int)Math.ceil((damage / full) * 100.0);
@@ -238,7 +244,10 @@ public class GenjiData {
     public boolean isDeflectActive() { return deflectTicks > 0; }
 
     public boolean tryDeflect() {
-        if (deflectCooldown > 0 || bladeCastTicks > 0) return false;
+        if (deflectCooldown > 0) return false;
+        // OW: deflect is unavailable for the entire dragonblade window —
+        // cast, active, AND sheathe. Sword takes both hands; can't deflect.
+        if (bladeCastTicks > 0 || bladeTicks > 0 || bladeSheatheTicks > 0) return false;
         deflectTicks = cfgDeflectMaxTicks();
         deflectCooldown = cfgDeflectCooldown();
         dirty = true;

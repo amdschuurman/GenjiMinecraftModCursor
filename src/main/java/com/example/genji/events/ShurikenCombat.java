@@ -139,14 +139,9 @@ public class ShurikenCombat {
         s.burstShotsLeft = PRIMARY_BURST_SHOTS;
         s.nextBurstTick  = tickCounter;              // fire immediately
         s.sharedCd       = PRIMARY_RECOVERY_TICKS;   // primary's own recovery
-        sp.level().playSound(
-                null,
-                sp.blockPosition(),
-                ModSounds.SHURIKEN_ATTACK1.get(),    // randomized by sounds.json
-                SoundSource.PLAYERS,
-                1.4f,
-                1.0f
-        );
+        // Per-shot sound is played in fireOne() — that gives the OW "tk-tk-tk"
+        // feel where each of the 3 burst shurikens picks an independent random
+        // variant from sounds.json, instead of one variant for the whole burst.
     }
 
     private static void startSecondary(ServerPlayer sp, State s) {
@@ -185,6 +180,12 @@ public class ShurikenCombat {
         proj.setDeltaMovement(look.scale(SHOT_SPEED));
 
         level.addFreshEntity(proj);
+
+        // Per-shot throw audio — each shot picks an independent random variant
+        // from sounds.json's 12-entry shot pool. Server-broadcast.
+        level.playSound(null, sp.blockPosition(),
+                ModSounds.SHURIKEN_ATTACK1.get(),
+                SoundSource.PLAYERS, 1.4f, 1.0f);
 
         // FP hand animation per M1 shot; TPS air-punch for the throw.
         ModNetwork.sendToPlayer(sp, new S2CShurikenFPAnim(S2CShurikenFPAnim.Type.M1_SHOT));

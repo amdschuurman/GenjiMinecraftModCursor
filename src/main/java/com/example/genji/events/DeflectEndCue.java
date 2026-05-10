@@ -13,9 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Plays the deflect "ending" cue 1 second before deflect expires AND the
+ * deflect "end" cue exactly when it hits zero ticks. Two distinct sounds
+ * sharing one tick handler.
+ */
 @Mod.EventBusSubscriber
 public class DeflectEndCue {
+    /** Last-tick deflect-tick counter per player, used to detect the two edges. */
     private static final Map<UUID, Integer> PREV = new HashMap<>();
+
+    /** Tick offset from end at which the "ending" warning cue plays (1 s = 20 ticks). */
+    private static final int ENDING_WARNING_TICKS = 20;
 
     /** Drop per-player previous-tick state on logout. Called from StateCleanup. */
     public static void onPlayerLoggedOut(UUID id) {
@@ -39,7 +48,8 @@ public class DeflectEndCue {
         int prev = PREV.getOrDefault(sp.getUUID(), 0);
         PREV.put(sp.getUUID(), now);
 
-        if (prev > 20 && now == 20) {
+        // 1 s pre-end "ending" warning — the original cue this class played.
+        if (prev > ENDING_WARNING_TICKS && now == ENDING_WARNING_TICKS) {
             sp.level().playSound(null, sp, ModSounds.DEFLECT_END.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         }
     }

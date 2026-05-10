@@ -55,6 +55,14 @@ public final class WallClimbAbility {
             return;
         }
 
+        // Hard-stop in states where wall-climb makes no sense — riding a horse,
+        // sleeping in a bed, creative-flying, spectator. Without these checks
+        // a forged C2SSetWallClimb(true) could climb the player while seated.
+        if (sp.isPassenger() || sp.isSleeping() || sp.getAbilities().flying) {
+            if (data.isWallClimbing()) data.setWallClimbing(false);
+            return;
+        }
+
         if (!data.isWallClimbing()) return;
 
         // Server-side validation of the climb preconditions. Without this a
