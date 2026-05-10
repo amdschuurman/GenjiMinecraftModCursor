@@ -6,7 +6,9 @@ import com.example.genji.config.GenjiConfig;
 import com.example.genji.content.DragonbladeItem;
 import com.example.genji.network.ModNetwork;
 import com.example.genji.network.packet.S2CDragonbladeFPAnim;
+import com.example.genji.registry.ModItems;
 import com.example.genji.registry.ModSounds;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -79,8 +81,10 @@ public final class DragonbladeCombat {
     /**
      * If the player is in any blade phase (cast/active/sheathe) but their main
      * hand is no longer a dragonblade (admin /clear, mod conflict, capability
-     * desync), force-cancel rather than running a zombie phase with no weapon.
-     * Returns true if the blade was cancelled and the caller should exit.
+     * desync, or the player dragged the dragonblade item to offhand/main inv),
+     * force-cancel rather than running a zombie phase with no weapon — AND
+     * sweep any orphaned dragonblade items out of the inventory so they
+     * can't be re-equipped later. Returns true if the blade was cancelled.
      */
     private static boolean cancelOrphanBladeIfNoWeapon(ServerPlayer sp, GenjiData data) {
         boolean inAnyBladePhase = data.isBladeActive() || data.isCastingBlade() || data.isSheathing();
@@ -90,6 +94,22 @@ public final class DragonbladeCombat {
         data.cancelBlade();
         data.clearBladeSlot();
         clearPerPlayerState(sp.getUUID());
+
+        // Sweep all 41 inventory slots — main hotbar, main inv, armor, offhand —
+        // converting any dragonblade items to shurikens. The blade was just
+        // orphaned; leaving the item to linger would make it a permanent
+        // unusable bauble (and exploit bait — see DragonbladeIntegrityHandler).
+        Inventory inv = sp.getInventory();
+        boolean anyReplaced = false;
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (!stack.isEmpty() && stack.is(ModItems.DRAGONBLADE.get())) {
+                inv.setItem(i, new ItemStack(ModItems.SHURIKEN.get()));
+                anyReplaced = true;
+            }
+        }
+        if (anyReplaced) sp.inventoryMenu.broadcastChanges();
+
         return true;
     }
 

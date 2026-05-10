@@ -186,9 +186,16 @@ public final class CommonEvents {
     }
 
     /**
-     * Sheathe → Done edge: swap the dragonblade item back to a shuriken in the
-     * remembered slot (or fall back to a hotbar scan if the remembered slot is
-     * invalid), then clear the slot record.
+     * Sheathe → Done edge: swap the dragonblade item back to a shuriken.
+     *
+     * Scans every inventory slot (not just the remembered one) — guards against
+     * the player having dragged the dragonblade between slots during the blade
+     * phase. Replacing every dragonblade with a shuriken is safe; replacing the
+     * remembered slot blindly with a shuriken would clobber whatever the player
+     * may have moved into that slot.
+     *
+     * Selected hotbar slot is restored to {@code rememberedSlot} so the screen
+     * pointer ends up where the player started.
      */
     private static void handleSheatheToDoneTransition(Player p, GenjiData data, int prevSheathe) {
         boolean justFinished = prevSheathe > 0 && data.getBladeSheatheTicks() == 0;
@@ -196,20 +203,25 @@ public final class CommonEvents {
         if (!(p instanceof ServerPlayer sp)) return;
 
         final int rememberedSlot = data.getBladeSlot();
-        if (rememberedSlot >= 0 && rememberedSlot < 9) {
-            sp.getInventory().setItem(rememberedSlot, new ItemStack(ModItems.SHURIKEN.get()));
-            sp.getInventory().selected = rememberedSlot;
-        } else {
-            // Fallback: find any dragonblade in hotbar and swap to shuriken.
-            for (int i = 0; i < 9; i++) {
-                ItemStack stack = sp.getInventory().getItem(i);
-                if (!stack.isEmpty() && stack.is(ModItems.DRAGONBLADE.get())) {
-                    sp.getInventory().setItem(i, new ItemStack(ModItems.SHURIKEN.get()));
-                    sp.getInventory().selected = i;
-                    break;
-                }
+        var inv = sp.getInventory();
+
+        int firstReplacedSlot = -1;
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (!stack.isEmpty() && stack.is(ModItems.DRAGONBLADE.get())) {
+                inv.setItem(i, new ItemStack(ModItems.SHURIKEN.get()));
+                if (firstReplacedSlot == -1) firstReplacedSlot = i;
             }
         }
+
+        // Restore selected hotbar slot — prefer the remembered one, fall back
+        // to wherever we found the dragonblade (only if it was in the hotbar).
+        if (rememberedSlot >= 0 && rememberedSlot < 9) {
+            inv.selected = rememberedSlot;
+        } else if (firstReplacedSlot >= 0 && firstReplacedSlot < 9) {
+            inv.selected = firstReplacedSlot;
+        }
+
         sp.inventoryMenu.broadcastChanges();
         data.clearBladeSlot();
     }
